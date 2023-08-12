@@ -77,7 +77,7 @@ const NavBar = () => {
                   {/* style the link element that looks like a outline button for Login */}
                   <Link
                     to="/login"
-                    className="inline-block font-semibold border border-blue-500 bg-transparent hover:border-transparent text-blue-500 hover:text-white hover:bg-blue-500 rounded py-2 px-4"
+                    className="inline-block font-semibold border transition-colors duration-200 border-blue-500 bg-transparent hover:border-transparent text-blue-500 hover:text-white hover:bg-blue-500 rounded py-2 px-4"
                   >
                     Login
                   </Link>
@@ -86,7 +86,7 @@ const NavBar = () => {
                   {/* style the link element that looks like a fill button for Signup */}
                   <Link
                     to="/signup"
-                    className="inline-block bg-blue-500 hover:bg-blue-600 text-white hover:text-gray-200 rounded py-2 px-4"
+                    className="inline-block transition-colors duration-200 bg-blue-500 hover:bg-blue-600 text-white hover:text-gray-200 rounded py-2 px-4"
                   >
                     Signup
                   </Link>
