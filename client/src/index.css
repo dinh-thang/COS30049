@@ -1,3 +1,14 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+::selection {
+    @apply bg-gray-500 text-white;
+}
+
+.not-found {
+    /* change the font size, color, and center align the text */
+    font-size: 24px;
+    color: red;
+    text-align: center;
+  }
