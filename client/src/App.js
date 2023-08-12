@@ -14,7 +14,7 @@ function App() {
     <div>
       <NavBar />
 
-      {/* Routes component to map the different pages */}
+      {/* Routes component to map the different pages and allow multi-page React application */}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="about" element={<AboutUs />} />
@@ -27,6 +27,12 @@ function App() {
         />
       </Routes>
 
+      <h1 className="text-3xl font-bold underline">Hello world!</h1>
+      <h1 className="text-3xl font-bold underline">Hello world!</h1>
+      <h1 className="text-3xl font-bold underline">Hello world!</h1>
+      <h1 className="text-3xl font-bold underline">Hello world!</h1>
+      <h1 className="text-3xl font-bold underline">Hello world!</h1>
+      <h1 className="text-3xl font-bold underline">Hello world!</h1>
       <h1 className="text-3xl font-bold underline">Hello world!</h1>
       <Footer />
     </div>
