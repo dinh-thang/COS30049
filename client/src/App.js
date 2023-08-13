@@ -8,6 +8,7 @@ import AboutUs from "./pages/AboutUs";
 import Report from "./pages/Report";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import Hero from "./components/Hero";
 
 function App() {
   return (
@@ -28,6 +29,13 @@ function App() {
       </Routes>
 
       <h1 className="text-3xl font-bold underline">Hello world!</h1>
+      <h1 className="text-3xl font-bold underline">Hello world!</h1>
+      <h1 className="text-3xl font-bold underline">Hello world!</h1>
+      <h1 className="text-3xl font-bold underline">Hello world!</h1>
+      <h1 className="text-3xl font-bold underline">Hello world!</h1>
+      <h1 className="text-3xl font-bold underline">Hello world!</h1>
+      <h1 className="text-3xl font-bold underline">Hello world!</h1>
+      <Hero />
       <Footer />
     </div>
   );
