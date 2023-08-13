@@ -4,6 +4,8 @@ FE: Reactjs (https://create-react-app.dev/)
 
 CSS framework: https://tailwindcss.com/
 
+Icons: React-icons (https://react-icons.github.io/react-icons/)
+
 ## Installation
 
 Clone GitHib repo:

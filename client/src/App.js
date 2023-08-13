@@ -15,7 +15,7 @@ function App() {
     <div>
       <NavBar />
 
-      {/* Routes component to map the different pages */}
+      {/* Routes component to map the different pages and allow multi-page React application */}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="about" element={<AboutUs />} />
