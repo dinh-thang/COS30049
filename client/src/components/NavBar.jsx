@@ -19,12 +19,12 @@ const NavBar = () => {
   const [open, setOpen] = useState(false); // useState hook to keep track of the toggle menu state
 
   // control whether the nav menu is open or closed in mobile version
-  const toggleMenu = () => {
+  const handleToggle = () => {
     setOpen(!open);
   };
 
   const listItemStyle = "text-xl my-2 md:ml-8 md:my-0"; // style for list item
-  const toggleMenuStyle =
+  const handleToggleStyle =
     "bg-blue-500 hover:bg-blue-600 active:bg-blue-700 flex items-center justify-center rounded-xl p-2 text-3xl text-white transition duration-400 hover:cursor-pointer"; // style for toggle menu
 
   return (
@@ -35,16 +35,16 @@ const NavBar = () => {
 
           {/* Toggle button for a menu on mobile version. On medium screen, this will be hidden */}
           <div
-            onClick={toggleMenu}
+            onClick={handleToggle}
             className="text-3xl fill-white absolute right-8 top-6 cursor-pointer md:hidden transition-all"
           >
             {/* ternary operator to display a close icon when the menu is open, otherwise render a menu icon */}
             {open ? (
-              <div className={toggleMenuStyle}>
+              <div className={handleToggleStyle}>
                 <AiOutlineClose />
               </div>
             ) : (
-              <div className={toggleMenuStyle}>
+              <div className={handleToggleStyle}>
                 <RiMenu3Fill />
               </div>
             )}
