@@ -1,63 +1,75 @@
 import Logo from "./Logo";
-import { Link } from "react-router-dom";
+import Button from "./Button";
+import { Link } from "react-router-dom"; // import Link from react-router-dom to enable routing
+// import icons from react-icons library
 import {
   AiFillFacebook,
   AiOutlineInstagram,
   AiFillGithub,
 } from "react-icons/ai";
-import { BsCodeSlash, BsMailbox, BsFillTelephoneFill } from "react-icons/bs";
+import { BsMailbox, BsFillTelephoneFill } from "react-icons/bs";
 
+// Footer component
 const Footer = () => {
+  // array to dynamically generate the nav links
   const navLinks = [
     { name: "Home", path: "/" },
     { name: "Report", path: "/report" },
     { name: "About Us", path: "/about" },
   ];
 
+  // style for list item to be used in the footer and reduce repetitive code
   const listItemStyle =
-    "text-gray-400 hover:text-white transition-colors duration-200 mx-4"; // style variable for list item
+    "text-gray-400 hover:text-white transition-colors duration-200 mx-4";
 
+  // render nav links function that maps over the navLinks array
+  const renderNavLinks = () => {
+    // return a list of React components, with each representing a nav link
+    return navLinks.map((link, index) => (
+      <li key={index} className={listItemStyle}>
+        <Link
+          to={link.path}
+          className="px-3 py-2 flex items-center text-white hover:opacity-75"
+        >
+          {link.name}
+        </Link>
+      </li>
+    ));
+  };
+
+  // return the footer component with logo, nav links, buttons and social media sections
   return (
-    <footer className="bg-gray-800 w-full py-1 mt-5">
-      <div className="max-w-screen-xl px-4 mx-auto flex flex-col md:flex-row justify-between items-center">
-        <div className="flex flex-col ">
-          {/* logo */}
-          <Logo className="flex justify-center md:justify-start "/>
+    <footer className="bg-gray-800 w-full py-1">
+      {/* Logo and call-to-action button section */}
+      <section className="max-w-screen-xl px-4 mx-auto flex flex-col lg:flex-row justify-between items-center">
+        <div className="flex flex-col">
+          <Logo className="flex justify-center lg:justify-start mb-[-4]" />
           <p className="text-white mb-4 ml-3 text-xl font-bold italic">
             Secure your smart contract code now
           </p>
-          {/* Try now button */}
-          <Link className="flex justify-center md:justify-start" to="#">
-            <button className="rounded-full ml-3 bg-blue-500 hover:bg-blue-700 py-2 px-4 text-white font-bold flex items-center transition-colors duration-200 ">
-              <BsCodeSlash className="mr-3 text-xl font-bold" />
-              Try now
-            </button>
-          </Link>
+          <Button content="Try now" />
         </div>
-        <ul className="flex flex-col md:flex-row mx-1.5 my-3 text-lg font-light justify-start">
-          {navLinks.map((link, index) => (
-            <li key={index} className={listItemStyle}>
-              <Link
-                to={link.path}
-                className="px-3 py-2 flex items-center text-white hover:opacity-75"
-              >
-                {link.name}
-              </Link>
-            </li>
-          ))}
+        <ul className="flex flex-col lg:flex-row mx-1.5 my-3 text-lg font-light justify-start">
+          {/* call above function */}
+          {renderNavLinks()}
         </ul>
-        <div>
-          <div className="flex flex-row text-white items-center my-3">
-              <BsFillTelephoneFill className="text-1.5xl mx-5" /> (01) 2345 6789
-          </div>
-          <div className="flex flex-row text-white items-center">
-              <BsMailbox className="text-1.5xl mx-5" /> group225@gmail.com
-          </div>
-        </div>
-      </div>
-        
-      <hr className=" mt-7 mb-3" />
-      <div className="flex justify-center py-3">
+        {/* contact information section */}
+        <section>
+          <p className="flex flex-row text-white items-center my-3">
+            {/* use the BsFillTelephoneFill icon from react-icons */}
+            <BsFillTelephoneFill className="text-1.5xl mx-5" /> (01) 2345 6789
+          </p>
+          <p className="flex flex-row text-white items-center">
+            {/* use the BsFillTelephoneFill icon from react-icons */}
+            <BsMailbox className="text-1.5xl mx-5" /> group225@gmail.com
+          </p>
+        </section>
+      </section>
+
+      <hr className="mt-7 mb-3" />
+      {/* social media links section */}
+      <section className="flex justify-center py-3">
+        {/* Link each social media icon to the external github page */}
         <Link className={listItemStyle} to="https://github.com/dinh-thang">
           <AiFillFacebook className="text-3xl" />
         </Link>
@@ -67,9 +79,9 @@ const Footer = () => {
         <Link className={listItemStyle} to="https://github.com/dinh-thang">
           <AiFillGithub className="text-3xl" />
         </Link>
-      </div>
+      </section>
     </footer>
   );
 };
 
-export default Footer;
+export default Footer; // export footer component to be used in other components
