@@ -4,6 +4,7 @@ import AboutUs from "./pages/AboutUs";
 import Report from "./pages/Report";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import MainContainer from "./components/MainContainer";
 import NotFound from "./pages/NotFound";
 import Layout from "./components/Layout";
 
@@ -25,7 +26,9 @@ const App = () => {
         />
       </Routes>
 
-    </Layout>
+      {/* testing main container */}
+      <MainContainer />
+      <Layout />
   );
 };
 
