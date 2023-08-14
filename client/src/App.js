@@ -1,36 +1,32 @@
 import { Routes, Route } from "react-router-dom";
-
-import Footer from "./components/Footer";
-import NavBar from "./components/NavBar";
-
 import Home from "./pages/Home";
 import AboutUs from "./pages/AboutUs";
 import Report from "./pages/Report";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import NotFound from "./pages/NotFound";
+import Layout from "./components/Layout";
 
-function App() {
+const App = () => {
   return (
-    <div>
-      <NavBar />
-
-      {/* Routes component to map the different pages and allow multi-page React application */}
+    // wrap the whole application in the Layout component to have consistent styling across all pages 
+    <Layout>
+      
+      {/* Routes component of react-router-dom library to map the different pages and allow multi-page React application */}
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="about" element={<AboutUs />} />
-        <Route path="report" element={<Report />} />
-        <Route path="login" element={<Login />} />
-        <Route path="signup" element={<Signup />} />
+        <Route path="/about" element={<AboutUs />} />
+        <Route path="/report" element={<Report />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
         <Route
           path="*"
-          element={<h1 className="not-found">Page Not Found</h1>}
+          element={< NotFound/>}
         />
       </Routes>
 
-      <h1 className="text-3xl font-bold underline">Hello world!</h1>
-      <Footer />
-    </div>
+    </Layout>
   );
-}
+};
 
 export default App;
