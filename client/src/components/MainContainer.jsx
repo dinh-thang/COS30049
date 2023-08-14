@@ -2,9 +2,9 @@ import Uploader from "./Uploader"
 
 const MainContainer = () => {
     return (
-        <div className=" w-screen h-screen">
-            <Uploader />
-        </div>
+        <Uploader />
+        // <div className="flex items-center justify-center p-12">
+        // </div>
     )
 }
 
