@@ -9,6 +9,7 @@ import Report from "./pages/Report";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Hero from "./components/Hero";
+import MainContainer from "./components/MainContainer";
 
 function App() {
   return (
@@ -35,6 +36,9 @@ function App() {
       <h1 className="text-3xl font-bold underline">Hello world!</h1>
       <h1 className="text-3xl font-bold underline">Hello world!</h1>
       <h1 className="text-3xl font-bold underline">Hello world!</h1>
+      
+      {/* testing main container */}
+      <MainContainer />
       <Hero />
       <Footer />
     </div>
