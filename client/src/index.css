@@ -1,15 +1,10 @@
+/* includes styles, pre-built components and utility classes provided by Tailwind CSS */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* customise the selected text in the application using Tailwind CSS utility classes */
 ::selection {
+    /* when selected, apply a background colour of gray and text colour of white */
     @apply bg-gray-500 text-white;
 }
-
-.not-found {
-    /* change the font size, color, and center align the text */
-    font-size: 24px;
-    color: red;
-    text-align: center;
-    font-weight: 700;
-  }

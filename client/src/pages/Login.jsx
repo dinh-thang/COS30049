@@ -1,15 +1,68 @@
-import React from "react";
-import Image from "../assets/hacker-mind.svg";
+import React, { useState } from "react";
+import AuthForm from "../components/AuthForm";
+import { BiLogIn } from "react-icons/bi";
+import Input from "../components/Input";
+import Image from "../assets/login.svg";
 
+// Login page rendered using AuthForm component which provides layout for the form
 const Login = () => {
+  // state variables to store and keep track of email and password, by default they are empty string
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  // function to handle form submission
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Add code here to handle login logic
+  };
+
   return (
-    <>
-      <h1 className="text-xl font-bold">Sign in to your account</h1>
-      <div className="flex flex-col md:flex-row">
-        <form action=""></form>
-        <img src={Image} alt="Hacker mind" />
-      </div>
-    </>
+    // pass different props defined in the AuthForm component 
+    <AuthForm
+      // props for the icon component for Login form
+      icon={<BiLogIn className="text-blue-600" />}
+      // props for the title text for Login form
+      title="Login to your account"
+      // text for the link to the Signup page
+      linkText="Signup"
+      // URL for the link to the Signup page
+      linkUrl="/signup"
+      // function to handle form submission
+      onSubmit={handleSubmit}
+      // text for the submit button
+      buttonText="Login"
+      // URL for the link in the paragraph
+      to="/signup"
+      // image source for the Login form
+      image={Image}
+      // alt text for the image in the Login form
+      alt="Login image"
+      // text for the paragraph in the Login form
+      paragraph="Don't have an account yet?"
+    >
+      <Input
+        // Input type for the email field
+        type="email"
+        // Placeholder text for the email field
+        placeholder="Email address"
+        // Value of the email field
+        value={email}
+        // event handler for changes in the email input field
+        // updates the 'email' state variable with the new value entered by the user
+        onChange={(e) => setEmail(e.target.value)}
+      />
+      <Input
+        // Input type for the password field
+        type="password"
+        // Placeholder text for the password field
+        placeholder="Password"
+        // Value of the password field
+        value={password}
+        // event handler for changes in the password input field
+        // updates the 'password' state variable with the new value entered by the user
+        onChange={(e) => setPassword(e.target.value)}
+      />
+    </AuthForm>
   );
 };
 

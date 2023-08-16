@@ -3,14 +3,16 @@ import React from "react";
 import Footer from "./Footer";
 import NavBar from "./NavBar";
 
-// Layout component that show the navbar, main body with styling and footer for every page
-const Layout = ({children}) => {
+// Layout component responsible for rendering the common layout structure of every pages
+// including nav bar, main content and footer
+// this component accepts "children" prop, which represents the content to be rendered inside main content area
+const Layout = ({ children }) => {
   return (
     <>
       <NavBar />
       {/* add margin to the body i.e. main element */}
-      {/* using Tailwind classes: small-screen devices will have smaller margin, but larger screens will have larger margin */}
-      <main className="my-6 mx-4 2xl:mx-44">{children}</main>
+      {/* Tailwind classes: small-screen devices will have smaller margin, but larger screens will have larger margin */}
+      <main className="my-7 mx-2 md:px-8 2xl:mx-44">{children}</main>
       <Footer />
     </>
   );

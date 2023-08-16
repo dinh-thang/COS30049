@@ -1,102 +1,69 @@
 import React, { useState } from "react";
-import {
-  AiOutlineSearch,
-  AiFillCaretDown,
-  AiOutlineCheck,
-} from "react-icons/ai";
+import { BsSearch } from "react-icons/bs";
+import { HiSortAscending } from "react-icons/hi";
+import { BiCheck } from "react-icons/bi";
 
-const menuItemStyle =
-  "px-4 py-2 text-sm text-blue-500 hover:bg-blue-100 hover:text-blue-900 flex justify-between cursor-pointer";
-
-const DropDown = ({
-  toggle,
-  sortBy,
-  onSortByChange,
-  orderBy,
-  onOrderByChange,
-}) => {
-  if (!toggle) {
-    // this will not only hide this sub-component but actually make this variable never exist if toggle is false -> return null
-    return null;
-  }
+const DropDown = () => {
+  const menuItemStyle =
+    "flex justify-between px-5 py-2 text-md hover:bg-slate-100 hover:text-slate-900 transition-colors duration-300 cursor-pointer";
 
   return (
     <div
-      className="origin-top-right absolute right-0 mt-2 w-60
-    rounded-md shadow-lg bg-white ring-1"
+      className="absolute mt-2 w-56 top-[42px] right-0 md:left-0
+      rounded-lg shadow-xl bg-white ring-1 ring-black ring-opacity-40"
     >
-      {/* dropdown menu */}
-      <div className="py-1">
+      {/* menu */}
+      <ul className="py-1">
         {/* menu item */}
-        <div
-          onClick={() => onSortByChange("reportDate")}
-          className={`${menuItemStyle} border-blue-1 border-b-2`}
-        >
-          Date
-          {sortBy === "reportDate" && <AiOutlineCheck className="text-black" />}
-        </div>
-        {/* menu item */}
-        <div onClick={() => onOrderByChange("asc")} className={menuItemStyle}>
-          Ascending
-          {orderBy === "asc" && <AiOutlineCheck className="text-black" />}
-        </div>
-        {/* menu item */}
-        <div onClick={() => onOrderByChange("desc")} className={menuItemStyle}>
-          Descending
-          {orderBy === "desc" && <AiOutlineCheck className="text-black" />}
-        </div>
-      </div>
+        <li className={`${menuItemStyle} border-gray-1 border-b-2`}>
+          Date <BiCheck />
+        </li>
+        <li className={menuItemStyle}>
+          Ascending <BiCheck />
+        </li>
+        <li className={menuItemStyle}>
+          Descending <BiCheck />
+        </li>
+      </ul>
     </div>
   );
 };
 
-const Search = ({
-  search,
-  onsearchChange,
-  sortBy,
-  onSortByChange,
-  orderBy,
-  onOrderByChange,
-}) => {
-  const [toggleSort, setToggleSort] = useState(false);
+const Search = () => {
+  const buttonStyle =
+    "px-3 bg-blue-500 hover:bg-blue-600 transition-colors duration-200 rounded-full mx-2";
+
+  const [open, setOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleToggle = () => {
+    setOpen(!open);
+  };
+
+  const handleSearchQueryChange = (event) => {
+    setSearchQuery(event.target.value);
+    // console.log(event.target.value);
+  };
 
   return (
-    <div className="py-5">
-      <div className="mt-1 relative rounded-md shadow-md">
-        <button className="absolute inset-y-0 left-0 flex items-center px-4 text-white bg-blue-500 rounded-full">
-          <AiOutlineSearch className="text-white text-xl" />
-          <label htmlFor="search" />
-        </button>
-        <input
-          type="text"
-          name="search"
-          value={search}
-          onChange={(event) => {
-            onsearchChange(event.target.value);
-          }}
-          className="pl-8 rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-blue-300"
-          placeholder="Search reports..."
-        />
-        <div className="absolute inset-y-0 right-0 flex items-center">
-          <div>
-            <button
-              onClick={() => setToggleSort(!toggleSort)}
-              type="button"
-              className="justify-center px-4 py-2 bg-blue-400 border-2 border-blue-400 text-sm text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 flex items-center"
-              id="option-menu"
-            >
-              Sort By <AiFillCaretDown className="ml-2" />
-            </button>
-            <DropDown
-              toggle={toggleSort}
-              sortBy={sortBy}
-              onSortByChange={(mySort) => onSortByChange(mySort)}
-              orderBy={orderBy}
-              onOrderByChange={(myOrder) => onOrderByChange(myOrder)}
-            />
-          </div>
-        </div>
-      </div>
+    <div className="flex justify-center mt-8">
+      <button type="submit" className={buttonStyle}>
+        {/* use icons that has white text and xl size */}
+        <BsSearch className="text-xl text-white" />
+      </button>
+      <label htmlFor="query" />
+      <input
+        type="text"
+        id="query"
+        placeholder="Search here..."
+        className="px-5 py-1.5 rounded-full border-2 border-blue-400 focus:outline-none focus:border-blue-600 transition-colors duration-300"
+        value={searchQuery}
+        onChange={handleSearchQueryChange}
+      />
+      <button onClick={handleToggle} className={`${buttonStyle} relative`}>
+        <HiSortAscending className="text-xl text-white" />
+        {open && <DropDown />}
+      </button>
     </div>
   );
 };

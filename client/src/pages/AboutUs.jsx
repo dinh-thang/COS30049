@@ -1,4 +1,5 @@
 // AboutUs component renders the content for the AboutUs page
+
 import React from "react";
 // import other components
 import Button from "../components/Button";
@@ -8,24 +9,27 @@ import { SiHiveBlockchain } from "react-icons/si";
 
 // import assets e.g. images
 import Image1 from "../assets/security-re.svg"; // Reference: https://undraw.co/illustrations
-// Reference: https://randomuser.me/photos
-import dev1 from "../assets/dev1.png"; 
+import dev1 from "../assets/dev1.png";
 import dev2 from "../assets/dev2.png";
 import dev3 from "../assets/dev3.png";
+// Reference: https://randomuser.me/photos
 
 // style variable that holds Tailwind CSS classes to reduce repetitive code
-const taglineStyle = "tracking-wider font-semibold text-blue-600 uppercase"; 
+const taglineStyle = "tracking-wider font-semibold text-blue-600 uppercase";
 const headingStyle =
   "tracking-tight text-3xl font-extrabold text-gray-900 lg:text-4xl";
 
-  // Reusable Card functional component that takes 3 props (icon, title, description) to render a styled card with these props 
+// Reusable Card component that takes 3 props to render a styled card
 const Card = ({ icon, title, description }) => {
   return (
     <section className="p-3 flex m-2 rounded-xl scale-90 hover:scale-100 hover:shadow-xl transition bg-gray-100 duration-500">
       <div className="text-white flex items-center justify-center rounded-lg bg-blue-500 h-12 w-12 md:h-10 md:w-10 mr-4">
+        {/* the icon to be displayed in the card */}
         {icon}
       </div>
+      {/* Flexbox to align child elements vertically i.e. flex-col */}
       <div className="flex flex-col">
+        {/* title and description to be displayed in the card */}
         <p className="font-medium text-gray-900">{title}</p>
         <p className="text-sm mt-1 text-gray-600">{description}</p>
       </div>
@@ -33,19 +37,23 @@ const Card = ({ icon, title, description }) => {
   );
 };
 
-// Box component that takes 3 props (name, id, image) will bed displayed in the "Meet our team" section
+// Box component that takes 3 props will be displayed in the "Meet our team" section
 const Box = ({ name, id, image, alt, desc }) => {
   return (
-    <figure className="rounded-lg bg-indigo-100 p-6 mx-8">
+    <figure className="rounded-lg bg-indigo-100 p-5 mx-5 md:mx-0">
       <div className="flex flex-col justify-center items-center mb-2">
         <img
           className="h-32 w-32 inline-flex items-center justify-center p-3 bg-blue-500 rounded-full"
+          // image source for the box
           src={image}
+          // alt text for the image
           alt={alt}
         />
+        {/* display student's name and id */}
         <h3 className="text-lg font-medium text-gray-900">{name}</h3>
         <p className="text-gray-500">{id}</p>
       </div>
+      {/* description of each student */}
       <p className="text-gray-400 text-center">{desc}</p>
     </figure>
   );
@@ -55,17 +63,20 @@ const Box = ({ name, id, image, alt, desc }) => {
 const AboutUs = () => {
   return (
     <div>
-      <h1 className="text-center text-3xl lg:text-5xl font-extrabold mb-10">About Us</h1>
+      <h1 className="text-center text-3xl lg:text-5xl font-extrabold mb-10">
+        About Us
+      </h1>
       {/* 1st grid */}
-      <section className="grid p-3 m-4 my-16 mb-14 lg:grid-cols-2 gap-5 place-items-center">
+      <section className="grid m-4 my-16 mb-14 lg:grid-cols-2 gap-3 place-items-center">
         <img src={Image1} alt="Smart contract security" />
         <div className="flex flex-col">
           <p className={taglineStyle}>Introducing</p>
           <h2 className={headingStyle}>Smart Contract Auditing</h2>
-          <p className="text-gray-400"> Elevate your smart contract security
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vero fugiat quis consequuntur,
-            enim aspernatur distinctio eius nam ipsa quas nisi quae. Nulla fuga veritatis error!
-            Aut quasi vel at velit?
+          <p className="text-gray-400">
+            {" "}
+            Elevate your smart contract security by using our tool to identify
+            security issues and inefficient coding practices that can lead to
+            your application being hacked.
           </p>
           <Button className="mt-3 mx-0" content="Try now" />
         </div>
@@ -76,7 +87,7 @@ const AboutUs = () => {
         <p className={taglineStyle}>Blockchain security</p>
         <h2 className={headingStyle}>Securing smart contracts</h2>
       </hgroup>
-      <section className="grid p-3 md:grid-cols-2 lg:grid-cols-4 gap-3">
+      <section className="grid md:grid-cols-2 lg:grid-cols-4 gap-3">
         {/* Use the above Card component with different props (icon, title, description) for customisation but with same style */}
         <Card
           icon={<AiFillCode className="text-2xl" />}
@@ -106,7 +117,7 @@ const AboutUs = () => {
         <h2 className={headingStyle}>Our team</h2>
       </hgroup>
       {/* implementation of the above Box component with different props (student name,student id, image, alt for image, description for each) for customisation */}
-      <section className="grid p-3 my-3 sm:grid-cols-2 lg:grid-cols-3 gap-7">
+      <section className="grid my-3 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <Box
           name="Henry Le"
           id="103795561"

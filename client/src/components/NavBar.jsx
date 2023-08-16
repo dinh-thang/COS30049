@@ -12,17 +12,19 @@ import { RiMenu3Fill } from "react-icons/ri";
 
 const NavBar = () => {
   // array to dynamically generate the nav links
+  // each object within the array has "name" property representing link's name and a "path" representing URL path for the link
   const navLinks = [
     { name: "Home", path: "/" },
     { name: "Report", path: "/report" },
     { name: "About Us", path: "/about" },
   ];
 
-  const [isOpen, setOpen] = useState(false); // useState hook to keep track of the toggle menu state
+  // useState hook to keep track of the toggle menu state
+  const [isOpen, setOpen] = useState(false); 
 
-  // control whether the nav menu is open or closed in mobile version
+  // toggle the menu in mobile version
   const toggleMenu = () => {
-    setOpen(!isOpen);
+    setOpen(!isOpen); // flips the value of isOpen state to its opposite value
   };
 
   const listItemStyle = "text-xl my-1 md:ml-8 md:my-0"; // style for list item
@@ -30,6 +32,7 @@ const NavBar = () => {
     "bg-blue-500 hover:bg-blue-600 active:bg-blue-700 flex items-center justify-center rounded-xl p-2 text-3xl text-white transition duration-400 hover:cursor-pointer"; // style for toggle menu
 
   return (
+    // nav element with gray background colour
     <nav className="bg-gray-800">
       <div className="px-5 md:flex md:flex-row md:justify-between">
         {/* imported logo component */}

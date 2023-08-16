@@ -4,7 +4,6 @@ import AboutUs from "./pages/AboutUs";
 import Report from "./pages/Report";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import MainContainer from "./components/MainContainer";
 import NotFound from "./pages/NotFound";
 import Layout from "./components/Layout";
 
@@ -20,15 +19,14 @@ const App = () => {
         <Route path="/report" element={<Report />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        {/* this route matches any path that hasn't been matched by any other route and renders the NotFound component  */}
         <Route
           path="*"
           element={< NotFound/>}
         />
       </Routes>
 
-      {/* testing main container */}
-      <MainContainer />
-      <Layout />
+      </Layout >
   );
 };
 

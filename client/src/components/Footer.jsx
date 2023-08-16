@@ -9,7 +9,7 @@ import {
 } from "react-icons/ai";
 import { BsMailbox, BsFillTelephoneFill } from "react-icons/bs";
 
-// Footer component
+// Footer component to be displayed in every pages
 const Footer = () => {
   // array to dynamically generate the nav links
   const navLinks = [
@@ -67,7 +67,7 @@ const Footer = () => {
       </section>
 
       <hr className="mt-7 mb-3" />
-      {/* social media links section */}
+      {/* use flexbox to align social media links section */}
       <section className="flex justify-center py-3">
         {/* Link each social media icon to the external github page */}
         <Link className={listItemStyle} to="https://github.com/dinh-thang">
