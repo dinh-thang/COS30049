@@ -9,9 +9,8 @@ import Layout from "./components/Layout";
 
 const App = () => {
   return (
-    // wrap the whole application in the Layout component to have consistent styling across all pages 
+    // wrap the whole application in the Layout component to have consistent layout across all pages
     <Layout>
-      
       {/* Routes component of react-router-dom library to map the different pages and allow multi-page React application */}
       <Routes>
         <Route path="/" element={<Home />} />

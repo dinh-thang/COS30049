@@ -27,8 +27,8 @@ const NavBar = () => {
     setOpen(!isOpen); // flips the value of isOpen state to its opposite value
   };
 
-  const listItemStyle = "text-xl my-1 md:ml-8 md:my-0"; // style for list item
-  const toggleMenuStyle =
+  const listItemStyle = "text-xl my-2 md:ml-8 md:my-0"; // style for list item
+  const handleToggleStyle =
     "bg-blue-500 hover:bg-blue-600 active:bg-blue-700 flex items-center justify-center rounded-xl p-2 text-3xl text-white transition duration-400 hover:cursor-pointer"; // style for toggle menu
 
   return (
@@ -38,22 +38,22 @@ const NavBar = () => {
         {/* imported logo component */}
         <Logo />
 
-        {/* toggle button for navbar on mobile version. On medium screen, this will be hidden */}
-        <div
-          onClick={toggleMenu}
-          className="text-3xl fill-white absolute right-8 top-6 cursor-pointer md:hidden"
-        >
-          {/* ternary operator to display a close icon when the menu is open, otherwise render a menu icon */}
-          {isOpen ? (
-            <div className={toggleMenuStyle}>
-              <AiOutlineClose />
-            </div>
-          ) : (
-            <div className={toggleMenuStyle}>
-              <RiMenu3Fill />
-            </div>
-          )}
-        </div>
+          {/* Toggle button for a menu on mobile version. On medium screen, this will be hidden */}
+          <div
+            onClick={toggleMenu}
+            className="text-3xl fill-white absolute right-8 top-6 cursor-pointer md:hidden transition-all"
+          >
+            {/* ternary operator to display a close icon when the menu is open, otherwise render a menu icon */}
+            {isOpen ? (
+              <div className={handleToggleStyle}>
+                <AiOutlineClose />
+              </div>
+            ) : (
+              <div className={handleToggleStyle}>
+                <RiMenu3Fill />
+              </div>
+            )}
+          </div>
 
         {/* nav links: on mobile, nav links are displayed vertically when toggling the menu. This is achieved by using open state variable and css properties flex and hidden  */}
         {/* on medium-sized screen and above (md:), the menu is displayed horizontally   */}
