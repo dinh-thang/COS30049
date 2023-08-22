@@ -1,0 +1,81 @@
+[
+  {
+    "reportId": "1",
+    "contractName": "TokenSale",
+    "submissionDate": "2023-08-21",
+    "submissionTime": "10:30 AM",
+    "vulnerabilities": [
+      {
+        "id": "1",
+        "name": "Local variable shadowing",
+        "check": "shadowing-local",
+        "severity": "Low",
+        "confidence": "High",
+        "description": "Detection of shadowing using local variables.",
+        "recommendation": "Rename the local variables that shadow another component."
+      },
+      {
+        "id": "2",
+        "name": "Uninitialized function pointers in constructors",
+        "check": "uninitialized-fptr-cst",
+        "severity": "Low",
+        "confidence": "High",
+        "description": "solc versions 0.4.5-0.4.26 and 0.5.0-0.5.8 contain a compiler bug leading to unexpected behavior when calling uninitialized function pointers in constructors.",
+        "recommendation": "Initialize function pointers before calling. Avoid function pointers if possible."
+      },
+      {
+        "id": "3",
+        "name": "Pre-declaration usage of local variables",
+        "check": "variable-scope",
+        "severity": "Low",
+        "confidence": "High",
+        "description": "Detects the possible usage of a variable before the declaration is stepped over (either because it is later declared, or declared in another scope).",
+        "recommendation": "Move all variable declarations prior to any usage of the variable, and ensure that reaching a variable declaration does not depend on some conditional if it is used unconditionally."
+      },
+      {
+        "id": "4",
+        "name": "Void constructor",
+        "check": "void-cst",
+        "severity": "Low",
+        "confidence": "High",
+        "description": "Detect the call to a constructor that is not implemented.",
+        "recommendation": "Remove the constructor call."
+      }
+    ]
+  },
+  {
+    "reportId": "2",
+    "contractName": "Crowdsale",
+    "submissionDate": "2023-08-22",
+    "submissionTime": "11:15 PM",
+    "vulnerabilities": [
+      {
+        "id": "5",
+        "name": "Cyclomatic complexity",
+        "check": "cyclomatic-complexity",
+        "severity": "Informational",
+        "confidence": "High",
+        "description": "Detects functions with high (> 11) cyclomatic complexity.",
+        "recommendation": "Reduce cyclomatic complexity by splitting the function into several smaller subroutines."
+      },
+      {
+        "id": "6",
+        "name": "Deprecated standards",
+        "check": "deprecated-standards",
+        "severity": "Informational",
+        "confidence": "High",
+        "description": "Detect the usage of deprecated standards.",
+        "recommendation": "Replace all uses of deprecated symbols."
+      },
+      {
+        "id": "7",
+        "name": "Unindexed ERC20 event parameters",
+        "check": "erc20-indexed",
+        "severity": "Informational",
+        "confidence": "High",
+        "description": "Detects whether events defined by the ERC20 specification that should have some parameters as indexed are missing the indexed keyword.",
+        "recommendation": "Add the indexed keyword to event parameters that should include it, according to the ERC20 specification."
+      }
+    ]
+  }
+]
