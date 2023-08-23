@@ -10,8 +10,9 @@ import { BsCodeSlash } from "react-icons/bs";
 const Button = ({ content, className }) => {
   // return a link element that wraps a button element
   return (
-    <Link className="flex justify-center lg:justify-start" to="#">
-      {/* additional CSS classes to be applied to the button */}
+    // Link to homepage where the uploader is located
+    <Link className="flex justify-center lg:justify-start" to="/">
+      {/* className props so that we can add additional CSS classes to be applied to the button */}
       <button
         className={`rounded-full m-2 bg-blue-500 hover:bg-blue-700 py-2 px-4 text-white font-bold inline-flex items-center transition-colors duration-200 ${className}`}
       >

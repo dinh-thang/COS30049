@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import AuthForm from "../components/AuthForm";
 import { BiLogIn } from "react-icons/bi";
 import Input from "../components/Input";
-import Image from "../assets/login.svg";
+import Image from "../assets/login.svg"; // Reference: https://undraw.co/
 
 // Login page rendered using AuthForm component which provides layout for the form
 const Login = () => {
@@ -12,8 +12,8 @@ const Login = () => {
 
   // function to handle form submission
   const handleSubmit = (e) => {
-    e.preventDefault();
-    // Add code here to handle login logic
+    e.preventDefault(); // prevent default behavior of form submission
+    // code to handle login logic - to be implemented in the backend
   };
 
   return (

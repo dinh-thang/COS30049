@@ -12,7 +12,7 @@ const Layout = ({ children }) => {
       <NavBar />
       {/* add margin to the body i.e. main element */}
       {/* Tailwind classes: small-screen devices will have smaller margin, but larger screens will have larger margin */}
-      <main className="my-7 mx-2 md:px-8 2xl:mx-44">{children}</main>
+      <main className="my-16 mx-5 md:mx-20 2xl:mx-44">{children}</main>
       <Footer />
     </>
   );

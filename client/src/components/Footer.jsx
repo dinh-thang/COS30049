@@ -1,12 +1,10 @@
 import Logo from "./Logo";
-import Button from "./Button";
 import { Link } from "react-router-dom"; // import Link from react-router-dom to enable routing
-// import icons from react-icons library
 import {
   AiFillFacebook,
   AiOutlineInstagram,
   AiFillGithub,
-} from "react-icons/ai";
+} from "react-icons/ai"; // import icons from react-icons library
 import { BsMailbox, BsFillTelephoneFill } from "react-icons/bs";
 
 // Footer component to be displayed in every pages
@@ -39,15 +37,14 @@ const Footer = () => {
 
   // return the footer component with logo, nav links, buttons and social media sections
   return (
-    <footer className="bg-gray-800 w-full py-1">
+    <footer className="bg-gray-800 w-full py-2">
       {/* Logo and call-to-action button section */}
       <section className="max-w-screen-xl px-4 mx-auto flex flex-col lg:flex-row justify-between items-center">
         <div className="flex flex-col">
-          <Logo className="flex justify-center lg:justify-start mb-[-4]" />
+          <Logo className="flex justify-center lg:justify-start mb-[-9px]" />
           <p className="text-white mb-4 ml-3 text-xl font-bold italic">
             Secure your smart contract code now
           </p>
-          <Button content="Try now" />
         </div>
         <ul className="flex flex-col lg:flex-row mx-1.5 my-3 text-lg font-light justify-start">
           {/* call above function */}
@@ -61,7 +58,7 @@ const Footer = () => {
           </p>
           <p className="flex flex-row text-white items-center">
             {/* use the BsFillTelephoneFill icon from react-icons */}
-            <BsMailbox className="text-1.5xl mx-5" /> group225@gmail.com
+            <BsMailbox className="text-1.5xl mx-5" /> group2-25@gmail.com
           </p>
         </section>
       </section>

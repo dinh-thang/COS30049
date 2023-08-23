@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+// File uploader component allows the user to upload smart contract files
 const Uploader = () => {
   // store the selected file using useState
   const [selectedFile, selectFile] = useState(null);
@@ -27,7 +28,7 @@ const Uploader = () => {
       <div className="flex justify-center mb-8">
         <label
           htmlFor="upload-file"
-          className="w-1/2 relative min-h-[200px] items-center justify-center rounded-md border border-[#e0e0e0] p-12 text-center"
+          className="w-full lg:w-1/2 relative min-h-[200px] items-center justify-center rounded-md border-2 border-[#e0e0e0] p-12 text-center hover:bg-gray-100 hover:border-dashed"
         >
           <div>
             <span className="mb-2 block text-xl font-semibold text-[#07074D]">

@@ -9,17 +9,12 @@ import { SiHiveBlockchain } from "react-icons/si";
 
 // import assets e.g. images
 import Image1 from "../assets/security-re.svg"; // Reference: https://undraw.co/illustrations
-import dev1 from "../assets/dev1.png";
-import dev2 from "../assets/dev2.png";
-import dev3 from "../assets/dev3.png";
-// Reference: https://randomuser.me/photos
-
-// style variable that holds Tailwind CSS classes to reduce repetitive code
-const taglineStyle = "tracking-wider font-semibold text-blue-600 uppercase";
-const headingStyle =
-  "tracking-tight text-3xl font-extrabold text-gray-900 lg:text-4xl";
+import dev1 from "../assets/dev1.png"; // Reference: https://randomuser.me/photos
+import dev2 from "../assets/dev2.png"; // Reference: https://randomuser.me/photos
+import dev3 from "../assets/dev3.png"; // Reference: https://randomuser.me/photos
 
 // Reusable Card component that takes 3 props to render a styled card
+// Because this component is used on this page only, no need to put this in separate file
 const Card = ({ icon, title, description }) => {
   return (
     <section className="p-3 flex m-2 rounded-xl scale-90 hover:scale-100 hover:shadow-xl transition bg-gray-100 duration-500">
@@ -38,6 +33,7 @@ const Card = ({ icon, title, description }) => {
 };
 
 // Box component that takes 3 props will be displayed in the "Meet our team" section
+// Because this component is used on this page only, no need to put this in separate file
 const Box = ({ name, id, image, alt, desc }) => {
   return (
     <figure className="rounded-lg bg-indigo-100 p-5 mx-5 md:mx-0">
@@ -59,8 +55,13 @@ const Box = ({ name, id, image, alt, desc }) => {
   );
 };
 
-// AboutUs component that renders the content for the AboutUs page
+// AboutUs page that uses the above components
 const AboutUs = () => {
+  // style variable that holds Tailwind CSS classes to reduce repetitive code
+  const taglineStyle = "tracking-wider font-semibold text-blue-600 uppercase";
+  const headingStyle =
+    "tracking-tight text-3xl font-extrabold text-gray-900 lg:text-4xl";
+    
   return (
     <div>
       <h1 className="text-center text-3xl lg:text-5xl font-extrabold mb-10">
@@ -73,7 +74,6 @@ const AboutUs = () => {
           <p className={taglineStyle}>Introducing</p>
           <h2 className={headingStyle}>Smart Contract Auditing</h2>
           <p className="text-gray-400">
-            {" "}
             Elevate your smart contract security by using our tool to identify
             security issues and inefficient coding practices that can lead to
             your application being hacked.
