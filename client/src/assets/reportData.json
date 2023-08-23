@@ -1,0 +1,131 @@
+[
+  {
+    "reportId": "1",
+    "contractName": "contract1.sol",
+    "submissionDate": "2023-08-21",
+    "submissionTime": "10:30 AM",
+    "severity": "Low",
+    "vulnerabilities": [
+      {
+        "id": "1",
+        "name": "Local variable shadowing",
+        "severity": "Low",
+        "description": "Detection of shadowing using local variables.",
+        "recommendation": "Rename the local variables that shadow another component."
+      },
+      {
+        "id": "2",
+        "name": "Uninitialized function pointers in constructors",
+        "severity": "Low",
+        "description": "solc versions 0.4.5-0.4.26 and 0.5.0-0.5.8 contain a compiler bug leading to unexpected behavior when calling uninitialized function pointers in constructors.",
+        "recommendation": "Initialize function pointers before calling. Avoid function pointers if possible."
+      },
+      {
+        "id": "3",
+        "name": "Pre-declaration usage of local variables",
+        "severity": "Low",
+        "description": "Detects the possible usage of a variable before the declaration is stepped over (either because it is later declared, or declared in another scope).",
+        "recommendation": "Move all variable declarations prior to any usage of the variable, and ensure that reaching a variable declaration does not depend on some conditional if it is used unconditionally."
+      },
+      {
+        "id": "4",
+        "name": "Void constructor",
+        "severity": "Low",
+        "description": "Detect the call to a constructor that is not implemented.",
+        "recommendation": "Remove the constructor call."
+      }
+    ]
+  },
+  {
+    "reportId": "2",
+    "contractName": "contract2.sol",
+    "submissionDate": "2023-08-22",
+    "submissionTime": "11:15 PM",
+    "severity": "Informational",
+    "vulnerabilities": [
+      {
+        "id": "1",
+        "name": "Cyclomatic complexity",
+        "severity": "Informational",
+        "description": "Detects functions with high (> 11) cyclomatic complexity.",
+        "recommendation": "Reduce cyclomatic complexity by splitting the function into several smaller subroutines."
+      },
+      {
+        "id": "2",
+        "name": "Deprecated standards",
+        "severity": "Informational",
+        "description": "Detect the usage of deprecated standards.",
+        "recommendation": "Replace all uses of deprecated symbols."
+      },
+      {
+        "id": "3",
+        "name": "Unindexed ERC20 event parameters",
+        "severity": "Informational",
+        "description": "Detects whether events defined by the ERC20 specification that should have some parameters as indexed are missing the indexed keyword.",
+        "recommendation": "Add the indexed keyword to event parameters that should include it, according to the ERC20 specification."
+      }
+    ]
+  },
+  {
+    "reportId": "3",
+    "contractName": "contract3.sol",
+    "submissionDate": "2023-08-23",
+    "submissionTime": "2:45 PM",
+    "severity": "Medium",
+    "vulnerabilities": [
+      {
+        "id": "1",
+        "name": "Local variable shadowing",
+        "severity": "Medium",
+        "description": "Detection of shadowing using local variables.",
+        "recommendation": "Rename the local variables that shadow another component."
+      },
+      {
+        "id": "2",
+        "name": "Uninitialized function pointers in constructors",
+        "severity": "Low",
+        "description": "solc versions 0.4.5-0.4.26 and 0.5.0-0.5.8 contain a compiler bug leading to unexpected behavior when calling uninitialized function pointers in constructors.",
+        "recommendation": "Initialize function pointers before calling. Avoid function pointers if possible."
+      }
+    ]
+  },
+  {
+    "reportId": "4",
+    "contractName": "contract4.sol",
+    "submissionDate": "2023-08-24",
+    "submissionTime": "9:20 AM",
+    "severity": "High",
+    "vulnerabilities": [
+      {
+        "id": "3",
+        "name": "Pre-declaration usage of local variables",
+        "severity": "High",
+        "description": "Detects the possible usage of a variable before the declaration is stepped over (either because it is later declared, or declared in another scope).",
+        "recommendation": "Move all variable declarations prior to any usage of the variable, and ensure that reaching a variable declaration does not depend on some conditional if it is used unconditionally."
+      },
+      {
+        "id": "4",
+        "name": "Void constructor",
+        "severity": "Low",
+        "description": "Detect the call to a constructor that is not implemented.",
+        "recommendation": "Remove the constructor call."
+      }
+    ]
+  },
+  {
+    "reportId": "5",
+    "contractName": "contract5.sol",
+    "submissionDate": "2023-08-25",
+    "submissionTime": "3:10 PM",
+    "severity": "High",
+    "vulnerabilities": [
+      {
+        "id": "1",
+        "name": "Cyclomatic complexity",
+        "severity": "High",
+        "description": "Detects functions with high (> 11) cyclomatic complexity.",
+        "recommendation": "Reduce cyclomatic complexity by splitting the function into several smaller subroutines."
+      }
+    ]
+  }
+]
