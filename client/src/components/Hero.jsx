@@ -21,7 +21,7 @@ const Hero = ({image, heading, button}) => {
         </p>
         <div className="mt-10 max-w-sm mx-auto sm:max-w-none sm:flex sm:justify-center">
           <Link
-            to=""
+            to="/upload"
             className="flex items-center justify-center px-4 py-3 rounded text-white bg-cyan-700 bg-opacity-100 hover:bg-opacity-80 sm:px-8"
           >
             {button}
