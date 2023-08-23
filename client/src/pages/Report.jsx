@@ -7,12 +7,12 @@ import reportData from "../assets/reportData.json"
 
 import ReportList from "../components/ReportList"
 
-import {TITLE_CSS_CONFIGURATION} from "../constant"
+import {TITLE1_CSS_CONFIGURATION} from "../constant"
 
 const Report = () => {
   return (
     <div>
-      <h1 className={TITLE_CSS_CONFIGURATION}>Your Reports</h1>
+      <h1 className={TITLE1_CSS_CONFIGURATION}>Your Reports</h1>
       <Search />
       {/* use map() function + styling nha */}
       <ReportList />
