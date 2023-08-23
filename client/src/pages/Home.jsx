@@ -3,6 +3,7 @@ import Image from "../assets/bitcoin.jpg"; //https://unsplash.com/photos/NHRM1u4
 import Image2 from "../assets/ethereum.svg"; //unDraw.co
 import Image3 from "../assets/bitcoin.svg"; //unDraw.co
 import Hero from "../components/Hero";
+import Uploader from "../components/Uploader"
 
 const Home = () => {
   return (
@@ -44,6 +45,7 @@ const Home = () => {
         </div>
       </div>
       <Hero image={Image} heading="Smart Contract" button="Try now" />
+      <Uploader />
     </>
   );
 };
