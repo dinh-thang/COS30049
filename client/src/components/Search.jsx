@@ -56,7 +56,7 @@ const Search = () => {
 
   return (
     // Flexbox layout with centered items for the search input
-    <div className="flex justify-center mt-8">
+    <div className="flex justify-center mb-8 mt-8">
       <button type="submit" className={buttonStyle}>
         {/* Search icons that has white text and xl size */}
         <BsSearch className="text-xl text-white" />
