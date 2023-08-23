@@ -130,7 +130,7 @@ const AboutUs = () => {
           id="103522316"
           image={dev2}
           alt="Thang Dinh"
-          desc="lorem"
+          desc="Hi I'm developing this website too!"
         />
         <Box
           name="Jade Hoang"
