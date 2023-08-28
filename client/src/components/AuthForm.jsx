@@ -1,7 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom"; // import link component from react-router-dom to route between pages
 
-// Authentication Form component to be used in Login and Signup pages because both pages have the same layout, styling (Tailwind css classes) and functionality, just different props such as icon, title,...
+// Authentication Form component to be used in Login and Signup pages 
+// because both pages have the same layout, styling (Tailwind css classes) and functionality, just different props such as icon, title etc.
 const AuthForm = ({
   icon, // icon to be displayed in the form
   title, // title of the form
@@ -16,7 +17,7 @@ const AuthForm = ({
 }) => {
   return (
     // the form will have grid layout, with 1 column in small screen i.e mobile, tablet version, and 2 cols in large screen i.e desktop version
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
       {/* the first section of the grid is the header, form and submit button */}
       <section className="px-6">
           {/* use flexbox i.e. flex and flex-col Tailwind classes to align the icon, title and form */}

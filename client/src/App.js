@@ -1,3 +1,10 @@
+/* Group 2-25
+  Group set 2: cybersecurity
+  Team member: 
+    Thang Dinh - 103522316
+    Henry Le - 103795561 
+    Jade Hoang - 103795587 */
+
 import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import AboutUs from "./pages/AboutUs";
@@ -23,13 +30,9 @@ const App = () => {
         <Route path="/report/:id" element={<DetailReport />} />
         <Route path="/upload" element={<Upload />} />
         {/* this route matches any path that hasn't been matched by any other route and renders the NotFound component  */}
-        <Route
-          path="*"
-          element={< NotFound/>}
-        />
+        <Route path="*" element={<NotFound />} />
       </Routes>
-
-      </Layout >
+    </Layout>
   );
 };
 

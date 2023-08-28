@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import AuthForm from "../components/AuthForm"; // import AuthForm component to be used in Login and Signup pages
 import Input from "../components/Input"; // import Input component to be used in Login and Signup pages
 import { BiUserPlus } from "react-icons/bi";
-import Image from "../assets/signup.svg";
+import Image from "../assets/signup.svg"; // Reference: https://undraw.co/
 
 const Signup = () => {
   // state variables to store user information, by default they are empty strings
@@ -13,7 +13,7 @@ const Signup = () => {
   // function to handle form submission
   const handleSubmit = (e) => {
     e.preventDefault(); // prevent default behavior of form submission
-    // Add code here to handle signup logic
+    // Add code here to handle signup logic - to be implemented in the backend
   };
 
   return (
