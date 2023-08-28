@@ -14,7 +14,6 @@ import Signup from "./pages/Signup";
 import NotFound from "./pages/NotFound";
 import Layout from "./components/Layout";
 import DetailReport from "./pages/DetailReport";
-import Upload from "./pages/Upload";
 
 const App = () => {
   return (
@@ -28,7 +27,6 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/report/:id" element={<DetailReport />} />
-        <Route path="/upload" element={<Upload />} />
         {/* this route matches any path that hasn't been matched by any other route and renders the NotFound component  */}
         <Route path="*" element={<NotFound />} />
       </Routes>

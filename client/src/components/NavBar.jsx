@@ -15,7 +15,6 @@ const NavBar = () => {
   // each object within the array has "name" property representing link's name and a "path" representing URL path for the link
   const navLinks = [
     { name: "Home", path: "/" },
-    { name: "Upload", path: "/upload" },
     { name: "Report", path: "/report" },
     { name: "About Us", path: "/about" },
   ];
