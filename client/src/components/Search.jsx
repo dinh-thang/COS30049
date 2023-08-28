@@ -45,7 +45,7 @@ const DropDown = ({
           onClick={() => handleSortByChange("severity")}
         >
           {/* conditionally render the checkmark if the sorting option is chosen, indicating selected state of the menu option   */}
-          Vulnerability level {selectedSortBy === "severity" && <BiCheck />}
+          Severity {selectedSortBy === "severity" && <BiCheck />}
         </li>
         {/* Menu item for sorting by submission date */}
         <li

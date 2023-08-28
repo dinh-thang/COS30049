@@ -1,42 +1,117 @@
-import { Link } from "react-router-dom"
-import reportData from "../assets/reportData.json"
+import { Link } from "react-router-dom";
 
-const ReportList = () => {
-    
-    "THIS IS THE PLACE HOLDER VERSION OF THE REPORT LIST ONLY."
-    const tableCategories = ["Id", "Contract Name", "Submission Date", "Submission Time", "Severity", "Vulnerability Details"]
-    
-    return (
-        <div className="flex justify-center">
-            <table className="table">
-                <thead>
-                    <tr>
-                        {/* looping through the tableCategories list */}
+// this component displays a list of audit reports
+const ReportList = ({ reports, onDelete }) => {
+  // THIS IS THE PLACE HOLDER VERSION OF THE REPORT LIST ONLY.
+  const tableCategories = [
+    "Report ID",
+    "Contract Name",
+    "Submission Date",
+    "Submission Time",
+    "Severity",
+    "Actions",
+  ];
 
-                        {tableCategories.map((category, index) => (
-                            <th key={index} class="px-4 py-2">{category}</th>
-                        ))}
-                    </tr>
-                </thead>
-                <tbody>
-                    {/* looping through all the reportData records */}
-                    {reportData.map((record, index) => (
-                        <tr key={index}>
-                            <td class="border px-4 py-2 text-center">{record.reportId}</td>
-                            <td class="border px-4 py-2 text-center">{record.contractName}</td>
-                            <td class="border px-4 py-2 text-center">{record.submissionDate}</td>
-                            <td class="border px-4 py-2 text-center">{record.submissionTime}</td>
-                            <td class="border px-4 py-2 text-center">{record.severity}</td>
-                            <td class="border px-4 py-2 text-center">
-                                <Link className="text-blue-500" to={"/report/" + record.reportId}>Details</Link>
-                            </td>
-                            {/* <td class="border px-4 py-2">{record.vulnerabilities}</td> */}
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+  return (
+    <div className="flex justify-center">
+      {/* display the table only if there are reports */}
+      {reports.length === 0 ? (
+        <p className="text-gray-500">No reports found</p>
+      ) : (
+        <div className="w-full">
+          {/* Desktop view will display a single table for all reports */}
+          <table className="hidden w-full md:table">
+            <thead>
+              {/* looping through the tableCategories list for table headers */}
+              <tr>
+                {tableCategories.map((category, index) => (
+                  <th key={index} className="px-4 py-2">
+                    {category}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {/* looping through all the reportData records for table body */}
+              {reports.map((record, index) => (
+                <tr key={index} className="even:bg-slate-100 text-center">
+                  <td className="border px-4 py-2">{record.reportId}</td>
+                  <td className="border px-4 py-2">{record.contractName}</td>
+                  <td className="border px-4 py-2">{record.submissionDate}</td>
+                  <td className="border px-4 py-2">{record.submissionTime}</td>
+                  <td className="border px-4 py-2">{record.severity}</td>
+                  <td className="border px-4 py-2 flex flex-col lg:flex-row justify-center">
+                    {/* Link to detailed report page */}
+                    <Link
+                      className="text-blue-500 hover:underline"
+                      to={"/report/" + (record.reportId - 1)}
+                    >
+                      Details
+                    </Link>
+                    {/* delete button */}
+                    <button
+                      className="text-red-500 lg:ml-4 hover:underline mt-1 lg:mt-0"
+                      onClick={() => onDelete(record.reportId)}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          {/* Mobile view will display the list format, on medium device, this is hidden */}
+          <div className="md:hidden">
+            {/* looping through all the reportData records for table body */}
+            {reports.map((record, index) => (
+              <div
+                key={index}
+                className="border px-4 py-2 mb-4 even:bg-slate-100"
+              >
+                <p>
+                  <span className="font-bold">Report ID: </span>
+                  {record.reportId}
+                </p>
+                <p>
+                  <span className="font-bold">Contract Name: </span>
+                  {record.contractName}
+                </p>
+                <p>
+                  <span className="font-bold">Submission Date: </span>
+                  {record.submissionDate}
+                </p>
+                <p>
+                  <span className="font-bold">Submission Time: </span>
+                  {record.submissionTime}
+                </p>
+                <p>
+                  <span className="font-bold">Severity: </span>
+                  {record.severity}
+                </p>
+                <div>
+                  {/* Link to detailed report page */}
+                  <Link
+                    className="text-blue-500"
+                    to={"/report/" + (record.reportId - 1)}
+                  >
+                    Details
+                  </Link>
+                  {/* delete button */}
+                  <button
+                    className="text-red-500 ml-5"
+                    onClick={() => onDelete(record.reportId)}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
-    )
-}
+      )}
+    </div>
+  );
+};
 
-export default ReportList
+export default ReportList;

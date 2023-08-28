@@ -4,6 +4,7 @@ import Input from "../components/Input"; // import Input component to be used in
 import { BiUserPlus } from "react-icons/bi";
 import Image from "../assets/signup.svg"; // Reference: https://undraw.co/
 
+// Sign up page: for account management and retrieval of previous reports
 const Signup = () => {
   // state variables to store user information, by default they are empty strings
   const [email, setEmail] = useState("");
@@ -13,7 +14,7 @@ const Signup = () => {
   // function to handle form submission
   const handleSubmit = (e) => {
     e.preventDefault(); // prevent default behavior of form submission
-    // Add code here to handle signup logic - to be implemented in the backend
+    // code here to handle signup logic - to be implemented in the backend
   };
 
   return (

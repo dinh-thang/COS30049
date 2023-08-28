@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom"; // import Link component of react-router-dom to enable routing between pages
 import Image from "../assets/bitcoin.jpg"; //  Reference: https://unsplash.com/photos/NHRM1u4GD_A
-// import icons from react-icons
+// import icons from https://react-icons.github.io/react-icons/
 import { TbReport } from "react-icons/tb";
 import { MdAnalytics, MdMobileFriendly } from "react-icons/md";
 import { BsSpeedometer } from "react-icons/bs";

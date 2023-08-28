@@ -1,14 +1,13 @@
 // AboutUs component renders the content for the AboutUs page
 
-import React from "react";
+import { TITLE1_CSS_CONFIGURATION } from "../constant"; // import global styles for titles
 // import other components
 import Button from "../components/Button";
 // import icons from react-icons library
 import { AiFillCode, AiOutlineAudit, AiFillBug } from "react-icons/ai";
 import { SiHiveBlockchain } from "react-icons/si";
-
 // import assets e.g. images
-import Image1 from "../assets/security-re.svg"; // Reference: https://undraw.co/illustrations
+import Image1 from "../assets/security.svg"; // Reference: https://undraw.co/illustrations
 import dev1 from "../assets/dev1.png"; // Reference: https://randomuser.me/photos
 import dev2 from "../assets/dev2.png"; // Reference: https://randomuser.me/photos
 import dev3 from "../assets/dev3.png"; // Reference: https://randomuser.me/photos
@@ -61,12 +60,10 @@ const AboutUs = () => {
   const taglineStyle = "tracking-wider font-semibold text-blue-600 uppercase";
   const headingStyle =
     "tracking-tight text-3xl font-extrabold text-gray-900 lg:text-4xl";
-    
+
   return (
     <div>
-      <h1 className="text-center text-3xl lg:text-5xl font-extrabold mb-10">
-        About Us
-      </h1>
+      <h1 className={TITLE1_CSS_CONFIGURATION}>About Us</h1>
       {/* 1st grid */}
       <section className="grid m-4 my-16 mb-14 lg:grid-cols-2 gap-3 place-items-center">
         <img src={Image1} alt="Smart contract security" />

@@ -37,7 +37,8 @@
     "contractName": "contract2.sol",
     "submissionDate": "2023-08-22",
     "submissionTime": "11:15 PM",
-    "severity": "Informational",
+    "severity": "High",
+
     "vulnerabilities": [
       {
         "id": "1",
@@ -106,7 +107,7 @@
     "contractName": "contract5.sol",
     "submissionDate": "2023-08-25",
     "submissionTime": "3:10 PM",
-    "severity": "High",
+    "severity": "Low",
     "vulnerabilities": [
       {
         "id": "1",

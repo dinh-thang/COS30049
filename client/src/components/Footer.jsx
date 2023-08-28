@@ -66,14 +66,14 @@ const Footer = () => {
       <hr className="mt-7 mb-3" />
       {/* use flexbox to align social media links section */}
       <section className="flex justify-center py-3">
-        {/* Link each social media icon to the external github page */}
-        <Link className={listItemStyle} to="https://github.com/dinh-thang">
+        {/* Link each social media icon, for visual purpose */}
+        <Link className={listItemStyle} to="#">
           <AiFillFacebook className="text-3xl" />
         </Link>
-        <Link className={listItemStyle} to="https://github.com/dinh-thang">
+        <Link className={listItemStyle} to="#">
           <AiOutlineInstagram className="text-3xl" />
         </Link>
-        <Link className={listItemStyle} to="https://github.com/dinh-thang">
+        <Link className={listItemStyle} to="#">
           <AiFillGithub className="text-3xl" />
         </Link>
       </section>

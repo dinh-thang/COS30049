@@ -8,7 +8,7 @@ const NotFound = () => {
   return (
     // use Flexbox to display the image and paragraph horizontally in larger screens, vertically in smaller screens
     <figure className="flex justify-around items-center flex-col lg:flex-row">
-      <img src={Image} alt="Not found" />
+      <img src={Image} alt="Not found" className="w-1/2" />
       <section className="grid place-items-center content-center sm:my-2">
         <h1 className="font-bold text-3xl lg:text-6xl text-blue-500">Oops!</h1>
         <p className=" font-bold mb-2 text-2xl my-2 lg:text-3xl text-red-500">
@@ -28,4 +28,4 @@ const NotFound = () => {
   );
 };
 
-export default NotFound; // export the NotFound component to be used in other files
+export default NotFound; // export the NotFound page to be used in other files

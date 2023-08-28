@@ -4,6 +4,7 @@ import { BiLogIn } from "react-icons/bi";
 import Input from "../components/Input";
 import Image from "../assets/login.svg"; // Reference: https://undraw.co/
 
+// Login page: for account management and retrieval of previous reports
 // Login page rendered using AuthForm component which provides layout for the form
 const Login = () => {
   // state variables to store and keep track of email and password, by default they are empty string
