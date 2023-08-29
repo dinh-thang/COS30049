@@ -1,5 +1,5 @@
 import { TITLE1_CSS_CONFIGURATION } from "../constant"; // import CSS config constants
-import { useParams } from "react-router-dom"; // import necessary hook for URL parameter extraction
+import { useParams, Link } from "react-router-dom"; // import necessary hook for URL parameter extraction
 import reportData from "../assets/reportData.json"; // import report data from JSON file
 
 // This is the designated page for a single contract report
@@ -7,7 +7,7 @@ import reportData from "../assets/reportData.json"; // import report data from J
 const DetailReport = () => {
   // the id of the report from URL parameters
   let { id } = useParams();
-  const report = reportData[parseInt(id)];
+  const report = reportData[parseInt(id)]; // extract the report from the JSON file based on the id
 
   return (
     <div>
@@ -15,6 +15,7 @@ const DetailReport = () => {
       <h1 className={TITLE1_CSS_CONFIGURATION}>
         Detail Report {parseInt(id) + 1}
       </h1>
+      
       {/* display report details */}
       <section>
         <h2 className="text-xl font-bold mb-2 text-blue-600">Report Details</h2>
@@ -37,30 +38,37 @@ const DetailReport = () => {
         </ul>
       </section>
 
-      <h2 className="text-xl font-bold mb-1 text-blue-600">Vulnerability Details</h2>
+      <h2 className="text-xl font-bold mb-1 text-blue-600">
+        Detected Vulnerability Details
+      </h2>
       {/* mapping through each vulnerability in the report */}
-      {reportData[parseInt(id)].vulnerabilities.map((v, index) => (
+      {report.vulnerabilities.map((v, index) => (
         <section
           key={index}
-          className="p-4 mb-3 border-b-2 last-of-type:border-none"
+          className="p-4 mb-4 border-b-2 last-of-type:border-none"
         >
           {/* vulnerability number, plus 1 because index start from 0 */}
           <h3 className="text-lg font-bold mb-2">Vulnerability {index + 1}</h3>
           <ul className="list-disc pl-6 mb-2">
             {/* display vulnerability details */}
             <li>
-              <span className="font-bold">Vulnerability name:</span> {v.name}
+              <span className="font-bold">Vulnerability name: </span>{v.name}
             </li>
             <li>
-              <span className="font-bold">Description:</span> {v.description}
+              <span className="font-bold">Description: </span>{v.description}
             </li>
             <li>
-              <span className="font-bold">Recommendation:</span>
-              {v.recommendation}
+              <span className="font-bold">Recommendation: </span>{v.recommendation}
             </li>
           </ul>
         </section>
       ))}
+      <Link
+        to="/report"
+            className="px-4 py-3 rounded text-white bg-blue-600 bg-opacity-100 hover:bg-opacity-80 sm:px-8"
+      >
+        Go Back
+      </Link>
     </div>
   );
 };

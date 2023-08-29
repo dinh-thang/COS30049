@@ -1,6 +1,8 @@
 import { useState } from "react";
+// import other components
 import Search from "../components/Search";
 import ReportList from "../components/ReportList";
+import UserProfile from "../components/UserProfile";
 import { TITLE1_CSS_CONFIGURATION } from "../constant";
 // This is a sample hard-coded data for the report page, the data here is for demo purpose
 // and the vulnerability data are taken from Slither documentation.
@@ -8,15 +10,15 @@ import { TITLE1_CSS_CONFIGURATION } from "../constant";
 import reportData from "../assets/reportData.json";
 
 // this component represents a page that displays a list of reports
-const Report = () => {
+const ReportHistory = () => {
   // state variables to manage various aspects of the component's state
   const [reports, setReports] = useState(reportData); // to manage report data
   const [query, setQuery] = useState(""); // to manage search query, by default, the query is empty
-  const [sortBy, setSortBy] = useState("contractName"); // to manage sort field, by default, sort by contractName
+  const [sortBy, setSortBy] = useState("submissionDate"); // to manage sort field, by default, sort by submission date field
   const [orderBy, setOrderBy] = useState("asc"); // to manage sort order, by default, the report list is displayed in ascending order
 
   // function to check if a report matches the current query
-  function reportMatchesQuery(report) {
+  function matchesQuery(report) {
     // filter reports based on various fields using the "query" state variable
     // convert both report field and query to lower case for case-insensitive search
     // check if each field e.g. contract name, submission time, etc. contains the query
@@ -59,7 +61,7 @@ const Report = () => {
   }
 
   // filter and sort the reports based on search and sort criteria
-  const filteredReports = reports.filter(reportMatchesQuery).sort(sortReports);
+  const filteredReports = reports.filter(matchesQuery).sort(sortReports);
 
   // function to handle report deletion
   const handleDelete = (reportId) => {
@@ -73,7 +75,9 @@ const Report = () => {
   return (
     <div>
       {/* Title using global styles */}
-      <h1 className={TITLE1_CSS_CONFIGURATION}>Your Reports</h1>
+      <h1 className={TITLE1_CSS_CONFIGURATION}>Report History</h1>
+      {/* User profile component */}
+      <UserProfile />
       {/* Search component */}
       <Search
         query={query}
@@ -89,4 +93,4 @@ const Report = () => {
   );
 };
 
-export default Report;
+export default ReportHistory;

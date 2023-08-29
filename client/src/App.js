@@ -8,7 +8,7 @@
 import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import AboutUs from "./pages/AboutUs";
-import Report from "./pages/Report";
+import ReportHistory from "./pages/ReportHistory";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import NotFound from "./pages/NotFound";
@@ -23,7 +23,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<AboutUs />} />
-        <Route path="/report" element={<Report />} />
+        <Route path="/report" element={<ReportHistory />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/report/:id" element={<DetailReport />} />
