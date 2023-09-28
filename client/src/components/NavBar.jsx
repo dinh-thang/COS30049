@@ -5,17 +5,10 @@ import Logo from "./Logo";
 // import icons from react-icons
 import { AiOutlineClose } from "react-icons/ai";
 import { RiMenu3Fill } from "react-icons/ri";
+import { navLinks } from "../constant";
 
 // navigation bar component
 const NavBar = () => {
-  // array to dynamically generate the nav links
-  // each object within the array has "name" property representing link's name and a "path" representing URL path for the link
-  const navLinks = [
-    { name: "Home", path: "/" },
-    { name: "Report", path: "/report" },
-    { name: "About Us", path: "/about" },
-  ];
-
   // useState hook to keep track of the toggle menu state
   const [isOpen, setOpen] = useState(false);
 

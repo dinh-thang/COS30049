@@ -6,16 +6,10 @@ import {
   AiFillGithub,
 } from "react-icons/ai"; // import icons from react-icons library
 import { BsMailbox, BsFillTelephoneFill } from "react-icons/bs";
+import { navLinks } from "../constant";
 
 // Footer component to be displayed in every pages
 const Footer = () => {
-  // array to dynamically generate the nav links
-  const navLinks = [
-    { name: "Home", path: "/" },
-    { name: "Report", path: "/report" },
-    { name: "About Us", path: "/about" },
-  ];
-
   // style for list item to be used in the footer and reduce repetitive code
   const listItemStyle =
     "text-gray-400 hover:text-white transition-colors duration-200 mx-4";
