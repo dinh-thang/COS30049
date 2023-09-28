@@ -17,7 +17,8 @@ const Footer = () => {
   ];
 
   // style for list item to be used in the footer and reduce repetitive code
-  const listItemStyle = "text-gray-400 hover:text-white transition-colors duration-200 mx-4";
+  const listItemStyle =
+    "text-gray-400 hover:text-white transition-colors duration-200 mx-4";
 
   // render nav links function that maps over the navLinks array
   const renderNavLinks = () => {
