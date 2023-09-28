@@ -68,17 +68,12 @@ async def get_report(report_id: int):
     """
 
 
-@app.get("/get_detail_report")
-async def get_detail_report(report_id: int):
+@app.get("/get_all_vulnerabilities")
+async def get_all_vulnerabilities(report_id: int):
     """
-    Fetch the json detail report data from the db
+    Fetch the json vulnerability data from the db
     """
     pass
 
 
-@app.get("/get_recommendation")
-async def get_recommendation(report_id):
-    """
-    Get the recommendation based on the vulnerability categories of a report
-    """
-    pass
+
