@@ -58,7 +58,7 @@ def analyze_contract(file_path: str, solidity_version: str):
     """
     # run Slither commands with the specified Solidity version
     # ! as slither cmd only accept file path as argument and return the .md file in the current directory
-    cmd = f'solc-select use {solidity_version} && slither {file_path} --checklist > {file_path}.md'
+    cmd = f'solc-select install {solidity_version} && solc-select use {solidity_version} && slither {file_path} --checklist > {file_path}.md'
     os.system(cmd)
 
     # return the path to the generated Markdown file
