@@ -2,11 +2,8 @@ import { useState } from "react";
 // import other components
 import Search from "../components/Search";
 import ReportList from "../components/ReportList";
-import UserProfile from "../components/UserProfile";
 import { TITLE1_CSS_CONFIGURATION } from "../constant";
-// This is a sample hard-coded data for the report page, the data here is for demo purpose
-// and the vulnerability data are taken from Slither documentation.
-// Reference: https://github.com/crytic/slither/wiki/Detector-Documentation
+// This is a sample hard-coded data for the report page, the data here is for demo purpose and the vulnerability data are taken from Slither documentation.
 import reportData from "../assets/reportData.json";
 
 // this component represents a page that displays a list of reports
@@ -77,7 +74,6 @@ const ReportHistory = () => {
       {/* Title using global styles */}
       <h1 className={TITLE1_CSS_CONFIGURATION}>Report History</h1>
       {/* User profile component */}
-      <UserProfile />
       {/* Search component */}
       <Search
         query={query}

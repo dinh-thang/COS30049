@@ -1,6 +1,6 @@
 import React from "react";
 
-// Form input component with different props, used in Login and Signup pages
+// Form input component 
 const Input = ({
   htmlFor,  // "for" attribute value of the label associated with the input
   type,  // type of input (e.g., "text", "email", "password")
