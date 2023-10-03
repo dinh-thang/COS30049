@@ -1,9 +1,3 @@
 __pycache__
 venv
-<<<<<<< Updated upstream
-
-.idea/
-=======
-.idea/
-
->>>>>>> Stashed changes
+uploads
