@@ -64,7 +64,7 @@ Slither analyse cmd in CLI
 ```
 solc-select install 0.8.4
 solc-select use 0.8.4 
-slither contract.sol
+slither contract.sol --checklist > result.md
 ```
 
 ### Documentation
