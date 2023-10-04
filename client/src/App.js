@@ -9,8 +9,6 @@ import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import AboutUs from "./pages/AboutUs";
 import ReportHistory from "./pages/ReportHistory";
-import Login from "./pages/Login";
-import Signup from "./pages/Signup";
 import NotFound from "./pages/NotFound";
 import Layout from "./components/Layout";
 import DetailReport from "./pages/DetailReport";
@@ -24,8 +22,6 @@ const App = () => {
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<AboutUs />} />
         <Route path="/report" element={<ReportHistory />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
         <Route path="/report/:id" element={<DetailReport />} />
         {/* this route matches any path that hasn't been matched by any other route and renders the NotFound component  */}
         <Route path="*" element={<NotFound />} />
