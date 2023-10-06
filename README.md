@@ -42,6 +42,9 @@ venv\Scripts\activate
 pip3 install -r requirements.txt
 uvicorn main:app --reload
 ```
+
+On wins: Set-ExecutionPolicy Unrestricted -Scope Process (only if have error: cannot run scripts due to restricted permissions)
+
 **Note:** 
 - MacOS use: ```source venv/bin/activate```
 - Windows use: ```venv\Scripts\activate```

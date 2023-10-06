@@ -3,6 +3,8 @@ import os
 import re
 import subprocess
 
+UPLOADS_DIR = "uploads"
+
 def save_uploaded_file(contract: UploadFile):
     """
     Saves the uploaded file to the 'uploads' directory.
@@ -15,10 +17,10 @@ def save_uploaded_file(contract: UploadFile):
     """
     try: 
         # ensure that the 'uploads' directory exists, exist_ok to True to specify existing dir w/o error
-        os.makedirs("uploads", exist_ok=True)
+        os.makedirs(UPLOADS_DIR, exist_ok=True)
 
         # file path within the 'uploads' directory
-        file_path = os.path.join("uploads", contract.filename)
+        file_path = os.path.join(UPLOADS_DIR, contract.filename)
 
         # write the contents of the uploaded file to the specified file path
         with open(file_path, "wb") as f:
@@ -28,7 +30,7 @@ def save_uploaded_file(contract: UploadFile):
         return file_path
     except Exception as e:
         #  HTTPException with a 500 status code
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error occurred while saving the file.")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error occurred while saving the file. Please try again.")
 
 
 def extract_solidity_version(file_content: str):
@@ -54,10 +56,10 @@ def extract_solidity_version(file_content: str):
 
         # return the version if found
         return version_pattern.group('version')
-    except Exception as e:
+    except HTTPException as e:
         raise e
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error occurred while extracting the Solidity version.")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error occurred while extracting the Solidity version. Please try again.")
 
 
 def analyze_contract(file_path: str, solidity_version: str):
@@ -72,15 +74,25 @@ def analyze_contract(file_path: str, solidity_version: str):
         str: The path to the generated Markdown file.
     """
     try:
-        # run Slither commands with the specified Solidity version
-        cmd = f'solc-select install {solidity_version} && solc-select use {solidity_version} && slither {file_path} --checklist > {file_path}.md'
-        os.system(cmd)
-
+        # run Slither commands with the specified Solidity version using subprocess
+        install_cmd = ['solc-select', 'install', solidity_version]
+        use_cmd = ['solc-select', 'use', solidity_version]
+        slither_cmd = ['slither', file_path, '--checklist']
+        
+        subprocess.run(install_cmd, check=True)
+        subprocess.run(use_cmd, check=True)
+        
+        with open(f"{file_path}.md", "w") as output_file:
+            subprocess.run(slither_cmd, stdout=output_file)
+        
         # return the path to the generated Markdown file
         return f"{file_path}.md"
+    except subprocess.CalledProcessError as e:
+        # HTTPException with a 500 status code and the error details
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error running Slither. Please try again.")
     except Exception as e:
         # HTTPException with a 500 status code and the error details
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error analyzing contract")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error analyzing contract. Please try again.")
 
 def filter_report(file_path: str):
     """
@@ -99,9 +111,6 @@ def filter_report(file_path: str):
                 - ID (int): The ID of the result.
                 - description (str): The description of the result.
                 - location (str): The location of the result within the contract.
-
-    Raises:
-        HTTPException: If an error occurs while filtering the report.
     """
     try:
         with open(file_path, "r") as f:
@@ -147,7 +156,7 @@ def filter_report(file_path: str):
             return vulnerabilities
     except Exception as e:
         # HTTPException with a 500 status code and the error details
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error occurred while filtering the report.")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error occurred while filtering the report. Please try again.")
 
 def upload_report(report: dict):
     # debug
@@ -167,12 +176,10 @@ def find_recommendation(check_name: str):
     
     Returns:
         str: The recommendation for the given vulnerability name.
-        
-    Raises:
-        HTTPException: If there is an error fetching the recommendation.
     """
     try:
-        # clone the slither wiki locally, basically .md file
+        # the file path to slither wiki, basically .md file that contains recommendation for the given vulnerability
+        # this file clone from Slither github page: https://github.com/crytic/slither/wiki/Detector-Documentation
         file_path = './slither.wiki/Detector-Documentation.md'
         
         # open the wiki file
@@ -180,7 +187,7 @@ def find_recommendation(check_name: str):
             # read the file
             content = file.read()
 
-        # regexp pattern with named groups for extracting recommendation
+        # regexp pattern with named group for extracting recommendation
         # DOTALL to match \n character
         pattern = re.compile(
             fr'##\s.*?###\sConfiguration\n\* Check: `{check_name}`.*?###\sRecommendation\n(?P<recommendation>.*?)(?=\n##\s|\Z)',
@@ -198,7 +205,7 @@ def find_recommendation(check_name: str):
             return f'Recommendation not found for: {check_name}'
     except Exception as e:
         # HTTPException with a 500 status code and the error details
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error fetching recommendation")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error fetching recommendation. Please try again.")
 
 # # func get current date and time as a string
 # def get_current_datetime():
