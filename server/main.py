@@ -1,11 +1,11 @@
-from fastapi import FastAPI, UploadFile, HTTPException
+from fastapi import FastAPI, UploadFile, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime
 import services
 
 app = FastAPI()
 
-# CORS configuration
+# CORS configuration to allow React app to access the API
 origins = [
     "http://localhost:3000",  
 ]
@@ -18,58 +18,55 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# # ! TEST ONLY
-# @app.post("/upload/")
-# async def upload_file(file: UploadFile):
-#     # validation 
-#     if not file:
-#         raise HTTPException(status_code=400, detail="No file provided.")
-
-#     if not file.filename.endswith(".sol"):
-#         raise HTTPException(status_code=400, detail="Invalid file extension. Only .sol files are allowed.")
-
-#     # get current date time
-#     current_datetime = get_current_datetime()
-
-#     # return the filename and submission date/time
-#     return {"filename": file.filename, "submission_datetime": current_datetime}
-
-# endpoint for uploading a Solidity contract and get the audit report
+# uploading a contract file and creating audit report
 @app.post("/upload_contract")
 async def create_report(contract: UploadFile):
     """
-    Create report involve
-        (0) extract the solidity version - to solc-select
-        (1) create the report using analyze_contract(contract), return .md file path
-        (2) filter_report(result.md), return the filtered report (parse audit report using regexp)
-        (3) upload_report(report), upload the filtered report to the database and return status code
+    # Create report involve: 
+        (1) save the uploaded file to the 'uploads' directory
+        (2) extract the solidity version - to solc-select cmd
+        (3) create the report using analyze_contract(contract), return .md file path
+        (4) filter_report(result.md), return the filtered report (parse audit report using regexp)
+        (5) upload_report(report), upload the filtered report to the database and return status code
     This function then return the status code of (3) or some kind of notification
-    """
-    # validation
-    if not contract:
-        raise HTTPException(status_code=400, detail="No file provided.")
+    """    
+    try:
+        # validation
+        if not contract:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No file provided.")
 
-    if not contract.filename.endswith(".sol"):
-        raise HTTPException(status_code=400, detail="Invalid file extension. Only .sol files are allowed.")
+        # validate if the uploaded file is a .sol file
+        if not contract.filename.endswith(".sol"):
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid file extension. Only .sol files are allowed.")
 
-    # save the uploaded Solidity file
-    file_path = services.save_uploaded_file(contract)
+        # Save the uploaded Solidity file
+        file_path = services.save_uploaded_file(contract)
 
-    # extract Solidity version from the uploaded .sol file content
-    with open(file_path, "r") as f:
-        file_content = f.read(500)
-        solidity_version = services.extract_solidity_version(file_content)
+        # extract Solidity version from the uploaded .sol file content
+        with open(file_path, "r") as f:
+            # read the 1st 500 characters of the uplaoded file
+            file_content = f.read(500)
+            # extract the version used in the contract
+            solidity_version = services.extract_solidity_version(file_content)
 
-    # Create and analyse the contract report -> get .md file
-    md_path = services.analyze_contract(file_path, solidity_version)
+        # create and analyse the audit report -> get .md file
+        md_path = services.analyze_contract(file_path, solidity_version)
 
-    # filter the .md report
-    filtered_report = services.filter_report(md_path)
+        # filter the .md report
+        filtered_report = services.filter_report(md_path)
 
-    # upload the filtered report to the database
-    status_code = services.upload_report(filtered_report)
-
-    return status_code
+        # upload the filtered report to the database
+        status_code = services.upload_report(filtered_report)
+        
+        # ! Check
+        # return the filtered report
+        return filtered_report
+    except HTTPException as e:
+        # raise HTTPException with specific error details e.g., invalid file type
+        raise e
+    except Exception as e:
+        # 500 status code and generic error details
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal server error. Please try again.")
 
 
 @app.get("/get_report")

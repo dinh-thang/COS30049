@@ -67,27 +67,7 @@ const NavBar = () => {
                 </Link>
               </li>
             ))}
-            {/* use variables as styling class to reduce repetitive code */}
-            <div className="flex flex-col lg:flex-row ml-3 lg:ml-0">
-              <li className={listItemStyle}>
-                {/* style the link element that looks like a outline button for Login */}
-                <Link
-                  to="/login"
-                  className="inline-block font-semibold border transition-colors duration-200 border-blue-500 bg-transparent hover:border-transparent text-blue-500 hover:text-white hover:bg-blue-500 rounded py-2 px-4"
-                >
-                  Login
-                </Link>
-              </li>
-              <li className={listItemStyle}>
-                {/* style the link element that looks like a fill button for Signup */}
-                <Link
-                  to="/signup"
-                  className="inline-block transition-colors duration-200 bg-blue-500 hover:bg-blue-600 text-white hover:text-gray-200 rounded py-2 px-4"
-                >
-                  Signup
-                </Link>
-              </li>
-            </div>
+            
           </ul>
         </div>
       </div>
