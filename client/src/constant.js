@@ -6,6 +6,6 @@ export const TITLE1_CSS_CONFIGURATION =
 // array to dynamically generate the nav links
 export const navLinks = [
   { name: "Home", path: "/" },
-  { name: "Report", path: "/report" },
+  { name: "Report History", path: "/report" },
   { name: "About Us", path: "/about" },
 ];

@@ -90,8 +90,6 @@ const Home = () => {
       <Hero
         image={Image}
         heading="Smart Contract"
-        linkText="Register now"
-        to="/signup"
         alt="Smart Contract"
         paragraph="Having trouble wondering if your code is safe? Try out now with our new project that can help you determine if your product is safe or not with 99.999% accuracy."
       />
