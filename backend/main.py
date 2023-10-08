@@ -68,25 +68,56 @@ async def create_report(contract: UploadFile):
         # 500 status code and generic error details
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal server error. Please try again.")
 
+@app.get("/get_all_reports")
+async def get_all_reports():
+    """
+    Retrieves all audit reports from MySQL database.
 
-@app.get("/get_report")
+    Response: {"status": "200 OK", "reports": [{report details}]}
+    """
+    # all_reports = []
+    # return {"status": "200 OK", "reports": all_reports}
+    pass
+
+@app.get("/get_report/{report_id}")
 async def get_report(report_id: int):
     """
-    Fetch the json report data from the db
-    """
+    Retrieves detailed information about a specific audit report from MySQL database.
 
-
-@app.get("/get_detail_report")
-async def get_detail_report(report_id: int):
+    Request: report_id: ID of the report to retrieve
+    Response: {"status": "200 OK", "report details"}
     """
-    Fetch the json detail report data from the db
+    pass
+
+@app.delete("/delete_report/{report_id}")
+async def delete_report(report_id: int):
+    """
+    Deletes a specific audit report.
+
+    Request: report_id: ID of the report to delete
+    Response: {"status": "200 OK", "message": "Report deleted successfully."}
     """
     pass
 
 
-@app.get("/get_recommendation")
-async def get_recommendation(report_id):
-    """
-    Get the recommendation based on the vulnerability categories of a report
-    """
-    pass
+# @app.get("/get_report")
+# async def get_report(report_id: int):
+#     """
+#     Fetch the json report data from the db
+#     """
+
+
+# @app.get("/get_detail_report")
+# async def get_detail_report(report_id: int):
+#     """
+#     Fetch the json detail report data from the db
+#     """
+#     pass
+
+
+# @app.get("/get_recommendation")
+# async def get_recommendation(report_id):
+#     """
+#     Get the recommendation based on the vulnerability categories of a report
+#     """
+#     pass

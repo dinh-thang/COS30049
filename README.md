@@ -27,7 +27,7 @@ git clone https://github.com/dinh-thang/COS30049-Smart-Contract-Audit-System.git
 #### Frontend
 
 ```bash
-cd client
+cd frontend
 npm install
 npm start
 ```
@@ -35,7 +35,7 @@ npm start
 #### Backend
 
 ```bash
-cd server
+cd backend
 pip3 install virtualenv
 virtualenv venv
 venv\Scripts\activate
