@@ -117,10 +117,13 @@ def filter_report(file_path: str):
             md_content = f.read()
 
             # patterns to match vulnerability types, impact, confidence, and results. 
-            # ! result_pattern no ok yet, 90% ok
-            vulnerability_pattern = r"##\s*(?P<vulnerability_type>[\w-]+)\nImpact:\s*(?P<impact>\w+)\nConfidence:\s*(?P<confidence>\w+)(?P<results>[\s\S]+?)(?=\n##|$)"
+            vulnerability_pattern = re.compile(
+                r"##\s*(?P<vulnerability_type>[\w-]+)\nImpact:\s*(?P<impact>\w+)\nConfidence:\s*(?P<confidence>\w+)(?P<results>[\s\S]+?)(?=\n##|$)"
+            )
+
             # one vuln can have many results with different locations within the contract
-            result_pattern = r'- \[ \] ID-(?P<id>\d+)\n(?P<description>[^\n]+)\n(?:.+\n)*\t[^\n]+\n\n[^\n]*?(?P<location>#\S+)'
+            result_pattern = re.compile(r'- \[ \] ID-(?P<id>\d+)\n(?P<description>.*?)(?=\nuploads/(?P<location>\S+)|$)', re.DOTALL)
+
 
             matches = re.finditer(vulnerability_pattern, md_content)
 
@@ -156,6 +159,7 @@ def filter_report(file_path: str):
             return vulnerabilities
     except Exception as e:
         # HTTPException with a 500 status code and the error details
+        print("Error {0}".format(str(e)))
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error occurred while filtering the report. Please try again.")
 
 def upload_report(report: dict):
