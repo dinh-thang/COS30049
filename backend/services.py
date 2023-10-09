@@ -122,7 +122,7 @@ def filter_report(file_path: str):
             )
 
             # one vuln can have many results with different locations within the contract
-            result_pattern = re.compile(r'- \[ \] ID-(?P<id>\d+)\n(?P<description>.*?)(?=\nuploads/(?P<location>\S+)|$)', re.DOTALL)
+            result_pattern = re.compile(r'- \[ \] ID-(?P<id>\d+)\n(?P<description>.*?)(?=\nuploads/(?P<location>[\s\S]+)|$)', re.DOTALL)
 
 
             matches = re.finditer(vulnerability_pattern, md_content)
@@ -211,6 +211,6 @@ def find_recommendation(check_name: str):
         # HTTPException with a 500 status code and the error details
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error fetching recommendation. Please try again.")
 
-# # func get current date and time as a string
-# def get_current_datetime():
-#     return datetime.now().strftime("%d-%m-%Y %I:%M %p")
+# func get current date and time as a string
+def get_current_datetime():
+    return datetime.now().strftime("%d-%m-%Y %I:%M %p")
