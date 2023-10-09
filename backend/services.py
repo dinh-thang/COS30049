@@ -2,6 +2,7 @@ from fastapi import UploadFile, HTTPException, status
 import os
 import re
 import subprocess
+from datetime import datetime
 
 UPLOADS_DIR = "uploads"
 
@@ -122,7 +123,7 @@ def filter_report(file_path: str):
             )
 
             # one vuln can have many results with different locations within the contract
-            result_pattern = re.compile(r'- \[ \] ID-(?P<id>\d+)\n(?P<description>.*?)(?=\nuploads/(?P<location>[\s\S]+)|$)', re.DOTALL)
+            result_pattern = re.compile(r'- \[ \] ID-(?P<id>\d+)\n(?P<description>.*?)(?=\nuploads/(?P<location>\S+)|$)', re.DOTALL)
 
 
             matches = re.finditer(vulnerability_pattern, md_content)
@@ -212,5 +213,17 @@ def find_recommendation(check_name: str):
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error fetching recommendation. Please try again.")
 
 # func get current date and time as a string
-def get_current_datetime():
-    return datetime.now().strftime("%d-%m-%Y %I:%M %p")
+def get_current_date():
+    """
+    Get the current date in the format DD-MM-YYYY.
+    """
+    current_date = datetime.now().strftime("%d-%m-%Y")
+    return current_date
+
+def get_current_time():
+    """
+    Get the current time in the format HH:MM AM/PM.
+    """
+    current_time = datetime.now().strftime("%I:%M %p")
+    return current_time
+

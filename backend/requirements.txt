@@ -3,3 +3,4 @@ uvicorn
 sqlalchemy
 python-multipart
 slither-analyzer
+mysql-connector-python

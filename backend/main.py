@@ -1,7 +1,9 @@
-from fastapi import FastAPI, UploadFile, HTTPException, status
+from fastapi import FastAPI, UploadFile, HTTPException, status, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from datetime import datetime
+from sqlalchemy.orm import Session
+from database import SessionLocal
 import services
+import crud
 
 app = FastAPI()
 
@@ -18,9 +20,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Dependency to get the database session
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
 # uploading a contract file and creating audit report
 @app.post("/upload_contract")
-async def create_report(contract: UploadFile):
+async def create_report(contract: UploadFile, db: Session = Depends(get_db)):
     """
     # Create report involve: 
         (1) save the uploaded file to the 'uploads' directory
@@ -38,7 +48,11 @@ async def create_report(contract: UploadFile):
         # validate if the uploaded file is a .sol file
         if not contract.filename.endswith(".sol"):
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid file extension. Only .sol files are allowed.")
-
+        
+        # get current date and time
+        submission_date = services.get_current_date()
+        submission_time = services.get_current_time()
+        
         # Save the uploaded Solidity file
         file_path = services.save_uploaded_file(contract)
 
@@ -54,70 +68,53 @@ async def create_report(contract: UploadFile):
 
         # filter the .md report
         filtered_report = services.filter_report(md_path)
+        
+        # prepare the report data in the required format
+        report_data = {
+            "contract_name": contract.filename,
+            "submission_date": submission_date,
+            "submission_time": submission_time,
+            "vulnerabilities_details": filtered_report,
+        }
+        
+        # return report_data
 
         # upload the filtered report to the database
-        status_code = services.upload_report(filtered_report)
+        crud.upload_report(db, report_data)
         
-        # ! Check
-        # return the filtered report
-        return filtered_report
+        # return the status code of okay
+        # TODO: change this to be consistenet with the status code?
+        return {"message": "Audit has been uploaded successfully."}
     except HTTPException as e:
         # raise HTTPException with specific error details e.g., invalid file type
         raise e
     except Exception as e:
         # 500 status code and generic error details
+        print(e)
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal server error. Please try again.")
 
-@app.get("/get_all_reports")
-async def get_all_reports():
-    """
-    Retrieves all audit reports from MySQL database.
+# Get all reports
+@app.get("/reports/")
+def get_reports(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
+    reports = crud.get_all_reports(db, skip=skip, limit=limit)
+    return reports
 
-    Response: {"status": "200 OK", "reports": [{report details}]}
-    """
-    # all_reports = []
-    # return {"status": "200 OK", "reports": all_reports}
-    pass
+# Get a specific report by ID
+@app.get("/reports/{report_id}")
+def get_report(report_id: int, db: Session = Depends(get_db)):
+    try:
+        report = crud.get_report(db, report_id)
+        
+        if report is None:
+            raise HTTPException(status_code=404, detail="Report not found")
+        
+        return report
+    except Exception as e:
+        # 500 status code and generic error details
+        print(e)
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Internal server error {str(e)}. Please try again.")
 
-@app.get("/get_report/{report_id}")
-async def get_report(report_id: int):
-    """
-    Retrieves detailed information about a specific audit report from MySQL database.
-
-    Request: report_id: ID of the report to retrieve
-    Response: {"status": "200 OK", "report details"}
-    """
-    pass
-
-@app.delete("/delete_report/{report_id}")
-async def delete_report(report_id: int):
-    """
-    Deletes a specific audit report.
-
-    Request: report_id: ID of the report to delete
-    Response: {"status": "200 OK", "message": "Report deleted successfully."}
-    """
-    pass
-
-
-# @app.get("/get_report")
-# async def get_report(report_id: int):
-#     """
-#     Fetch the json report data from the db
-#     """
-
-
-# @app.get("/get_detail_report")
-# async def get_detail_report(report_id: int):
-#     """
-#     Fetch the json detail report data from the db
-#     """
-#     pass
-
-
-# @app.get("/get_recommendation")
-# async def get_recommendation(report_id):
-#     """
-#     Get the recommendation based on the vulnerability categories of a report
-#     """
-#     pass
+# Delete a specific audit report
+@app.delete("/reports/{report_id}")
+async def delete_report(report_id: int, db: Session = Depends(get_db)):
+    return crud.delete_report(db, report_id)

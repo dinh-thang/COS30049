@@ -1,8 +1,7 @@
 # define db models for ORM
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
+from sqlalchemy import Column, Integer, String, ForeignKey, Text
+from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
-
-from .database import Base
 
 """
 NAMING CONVENTION
@@ -11,16 +10,32 @@ NAMING CONVENTION
 (3) name with 2 words above should use underscore "_"
 """
 
+Base = declarative_base()
 
-# TODO: change and add this
 class Report(Base):
     __tablename__ = "reports"
-
-    # changed id -> report_id since id might be a reserved keyword
     report_id = Column(Integer, primary_key=True, index=True)
-    contract_name = Column(String, index=True)
+    contract_name = Column(String(255), index=True)
+    submission_date = Column(String(255))
+    submission_time = Column(String(255))
+    vulnerabilities = relationship("Vulnerability", back_populates="report", cascade="all, delete")
 
+class Vulnerability(Base):
+    __tablename__ = "vulnerabilities"
+    vuln_id = Column(Integer, primary_key=True, index=True)
+    vulnerability_type = Column(String(255))
+    impact = Column(String(255))
+    confidence = Column(String(255))
+    recommendation = Column(Text)
+    report_id = Column(Integer, ForeignKey("reports.report_id"))
+    results = relationship("Result", back_populates="vulnerability", cascade="all, delete")
+    report = relationship("Report", back_populates="vulnerabilities", cascade="all, delete")
 
-class DetailReport(Base):
-    __tablename__ = "detail_reports"
-
+class Result(Base):
+    __tablename__ = "results"
+    results_id = Column(Integer, primary_key=True, index=True)
+    vuln_id = Column(Integer, ForeignKey("vulnerabilities.vuln_id"))
+    ID = Column(Integer)
+    description = Column(Text)
+    location = Column(String(255))
+    vulnerability = relationship("Vulnerability", back_populates="results", cascade="all, delete")
