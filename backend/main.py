@@ -18,6 +18,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 # uploading a contract file and creating audit report
 @app.post("/upload_contract")
 async def create_report(contract: UploadFile):
