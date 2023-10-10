@@ -4,6 +4,9 @@ import re
 import subprocess
 
 UPLOADS_DIR = "uploads"
+# the file path to slither wiki, basically .md file that contains recommendation for the given vulnerability
+# this file clone from Slither github page: https://github.com/crytic/slither/wiki/Detector-Documentation
+DETECTOR_DOCUMENT_PATH = './slither.wiki/Detector-Documentation.md'
 
 def save_uploaded_file(contract: UploadFile):
     """
@@ -173,9 +176,7 @@ def find_recommendation(check_name: str):
         str: The recommendation for the given vulnerability name.
     """
     try:
-        # the file path to slither wiki, basically .md file that contains recommendation for the given vulnerability
-        # this file clone from Slither github page: https://github.com/crytic/slither/wiki/Detector-Documentation
-        file_path = './slither.wiki/Detector-Documentation.md'
+        file_path = DETECTOR_DOCUMENT_PATH
         
         # open the wiki file
         with open(file_path, 'r') as file:
@@ -214,7 +215,7 @@ def find_description(check_name: str):
         str: The description for the given vulnerability name.
     """
     try:
-        file_path = './slither.wiki/Detector-Documentation.md'
+        file_path = DETECTOR_DOCUMENT_PATH
         # the file path to slither wiki, basically .md file that contains description for the given vulnerability
         # this file clone from Slither github page: https://github.com/crytic/slither/wiki/Detector-Documentation
         
@@ -224,11 +225,15 @@ def find_description(check_name: str):
             content = file.read()
 
         # Define the pattern with named groups for extracting relevant information
-        pattern = re.compile(
-            fr'##\s.*?###\sConfiguration\n\* Check: `{check_name}`.*?###\sDescription\n(?P<description>.*?)(?=\n###\sExploit Scenario|$)',
-            re.DOTALL
-        )
+        # pattern = re.compile(
+        #     fr'##\s.*?###\sConfiguration\n\* Check: `{check_name}`.*?###\sDescription\n(?P<description>.*?)(?=\n###\sExploit Scenario|$)',
+        #     re.DOTALL
+        # )
 
+            pattern = re.compile(
+                fr'##\s.*?###\sConfiguration\n\* Check: `{check_name}`.*?###\sDescription\n(?P<description>.*?)(?=\n###\sExploit Scenario:|\n##|$)',
+                re.DOTALL
+            )
         # Search for the pattern in the content
         match = re.search(pattern, content)
 
