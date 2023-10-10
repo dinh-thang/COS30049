@@ -1,39 +1,18 @@
 # define the pydantic models - validation schema
-from pydantic import BaseModel
+# ! no need this file
 from typing import List
+from pydantic import BaseModel
 
-class ResultCreate(BaseModel):
-    ID: int
-    description: str
-    location: str
-
-    class Config:
-        orm_mode = True
-
-
-class VulnerabilityCreate(BaseModel):
+class VulnerabilityDetails(BaseModel):
     vulnerability_type: str
     impact: str
     confidence: str
+    description: str
     recommendation: str
-    results: List[ResultCreate]
-    
-    class Config:
-        orm_mode = True
 
-
-class ReportCreate(BaseModel):
+class ReportData(BaseModel):
     contract_name: str
     submission_date: str
     submission_time: str
-    vulnerabilities_details: List[VulnerabilityCreate]
-    
-    class Config:
-        orm_mode = True
-
-class ReportResponse(BaseModel):
-    message: str
-
-    class Config:
-        orm_mode = True
+    vulnerabilities_details: List[VulnerabilityDetails]
 

@@ -1,7 +1,7 @@
 from fastapi import FastAPI, UploadFile, HTTPException, status, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
-from database import SessionLocal
+from database import SessionLocal, get_db
 import services
 import crud
 
@@ -20,17 +20,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
-# Dependency to get the database session
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
 # uploading a contract file and creating audit report
-@app.post("/upload_contract")
+@app.post("/upload_contract", status_code=status.HTTP_201_CREATED)
 async def create_report(contract: UploadFile, db: Session = Depends(get_db)):
     """
     # Create report involve: 
@@ -59,7 +50,7 @@ async def create_report(contract: UploadFile, db: Session = Depends(get_db)):
 
         # extract Solidity version from the uploaded .sol file content
         with open(file_path, "r") as f:
-            # read the 1st 500 characters of the uplaoded file
+            # read the first 500 characters of the uploaded file
             file_content = f.read(500)
             # extract the version used in the contract
             solidity_version = services.extract_solidity_version(file_content)
@@ -75,16 +66,13 @@ async def create_report(contract: UploadFile, db: Session = Depends(get_db)):
             "contract_name": contract.filename,
             "submission_date": submission_date,
             "submission_time": submission_time,
+            "number_of_vulnerabilities": None, # initialise the number of vulnerabilities
             "vulnerabilities_details": filtered_report,
         }
         
-        # return report_data
-
         # upload the filtered report to the database
         crud.upload_report(db, report_data)
         
-        # return the status code of okay
-        # TODO: change this to be consistenet with the status code?
         return {"message": "Audit has been uploaded successfully."}
     except HTTPException as e:
         # raise HTTPException with specific error details e.g., invalid file type
@@ -95,27 +83,17 @@ async def create_report(contract: UploadFile, db: Session = Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal server error. Please try again.")
 
 # Get all reports
-@app.get("/reports/")
+@app.get("/reports/", status_code=status.HTTP_200_OK)
 def get_reports(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
     reports = crud.get_all_reports(db, skip=skip, limit=limit)
     return reports
 
 # Get a specific report by ID
-@app.get("/reports/{report_id}")
+@app.get("/reports/{report_id}", status_code=status.HTTP_200_OK)
 def get_report(report_id: int, db: Session = Depends(get_db)):
-    try:
-        report = crud.get_report(db, report_id)
-        
-        if report is None:
-            raise HTTPException(status_code=404, detail="Report not found")
-        
-        return report
-    except Exception as e:
-        # 500 status code and generic error details
-        print(e)
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Internal server error {str(e)}. Please try again.")
+    return crud.get_report(db, report_id)
 
 # Delete a specific audit report
-@app.delete("/reports/{report_id}")
+@app.delete("/reports/{report_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_report(report_id: int, db: Session = Depends(get_db)):
     return crud.delete_report(db, report_id)
