@@ -1,6 +1,7 @@
 from fastapi import FastAPI, UploadFile, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
-from datetime import datetime
+
+import crud
 import services
 
 app = FastAPI()
@@ -78,7 +79,7 @@ async def get_all_reports():
     """
     # all_reports = []
     # return {"status": "200 OK", "reports": all_reports}
-    pass
+    return crud.read_all_reports()
 
 @app.get("/get_report/{report_id}")
 async def get_report(report_id: int):
@@ -99,26 +100,3 @@ async def delete_report(report_id: int):
     Response: {"status": "200 OK", "message": "Report deleted successfully."}
     """
     pass
-
-
-# @app.get("/get_report")
-# async def get_report(report_id: int):
-#     """
-#     Fetch the json report data from the db
-#     """
-
-
-# @app.get("/get_detail_report")
-# async def get_detail_report(report_id: int):
-#     """
-#     Fetch the json detail report data from the db
-#     """
-#     pass
-
-
-# @app.get("/get_recommendation")
-# async def get_recommendation(report_id):
-#     """
-#     Get the recommendation based on the vulnerability categories of a report
-#     """
-#     pass

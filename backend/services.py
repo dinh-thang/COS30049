@@ -165,10 +165,8 @@ def filter_report(file_path: str):
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error occurred while filtering the report. Please try again.")
 
 
-def upload_report(report: dict):
-    # debug
-    # print("Uploading report to the database:")
-    # print(report)
+def upload_report(report: list):
+
     return report
     # return a status code/msg
     # return "Report uploaded successfully"
