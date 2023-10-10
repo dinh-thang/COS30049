@@ -5,6 +5,7 @@ import subprocess
 
 UPLOADS_DIR = "uploads"
 
+
 def save_uploaded_file(contract: UploadFile):
     """
     Saves the uploaded file to the 'uploads' directory.
@@ -94,6 +95,7 @@ def analyze_contract(file_path: str, solidity_version: str):
         # HTTPException with a 500 status code and the error details
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error analyzing contract. Please try again.")
 
+
 def filter_report(file_path: str):
     """
     Reads the contents of a markdown file located at the given `file_path` and extracts the vulnerabilities and their details.
@@ -119,7 +121,7 @@ def filter_report(file_path: str):
             # patterns to match vulnerability types, impact, confidence, and results. 
             # ! result_pattern no ok yet, 90% ok
             vulnerability_pattern = r"##\s*(?P<vulnerability_type>[\w-]+)\nImpact:\s*(?P<impact>\w+)\nConfidence:\s*(?P<confidence>\w+)(?P<results>[\s\S]+?)(?=\n##|$)"
-            # one vuln can have many results with different locations within the contract
+            # one vulnerability can have many results with different locations within the contract
             result_pattern = r'- \[ \] ID-(?P<id>\d+)\n(?P<description>[^\n]+)\n(?:.+\n)*\t[^\n]+\n\n[^\n]*?(?P<location>#\S+)'
 
             matches = re.finditer(vulnerability_pattern, md_content)
@@ -158,14 +160,15 @@ def filter_report(file_path: str):
         # HTTPException with a 500 status code and the error details
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error occurred while filtering the report. Please try again.")
 
+
 def upload_report(report: dict):
     # debug
     # print("Uploading report to the database:")
     # print(report)
     return report
-
     # return a status code/msg
     # return "Report uploaded successfully"
+
 
 def find_recommendation(check_name: str):
     """
