@@ -54,11 +54,3 @@ class Vulnerability(Base):
 
     res = relationship("results", back_populates="vuls")
 
-# class ReportVulnerability(Base):
-#     __tablename__ = "report_vulnerability"
-#     id = Column(Integer, primary_key=True, index=True)
-#     report_id = Column(Integer, ForeignKey("reports.id"))
-#     vul_id = Column(Integer, ForeignKey("vulnerabilities"))
-#     descr = Column(String)
-#     loc = Column(String)
-
