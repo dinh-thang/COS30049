@@ -118,12 +118,11 @@ def filter_report(file_path: str):
 
             # patterns to match vulnerability types, impact, confidence, and results. 
             vulnerability_pattern = re.compile(
-                r"##\s*(?P<vulnerability_type>[\w-]+)\nImpact:\s*(?P<impact>\w+)\nConfidence:\s*(?P<confidence>\w+)(?P<results>[\s\S]+?)(?=\n##|$)"
+                r"##\s*(?P<vulnerability_type>[\w-]+)\nImpact:\s*(?P<impact>\w+)\nConfidence:\s*(?P<confidence>\w+)"
             )
 
-            # one vuln can have many results with different locations within the contract
-            result_pattern = re.compile(r'- \[ \] ID-(?P<id>\d+)\n(?P<description>.*?)(?=\nuploads/(?P<location>\S+)|$)', re.DOTALL)
-
+            # # one vuln can have many results with different locations within the contract
+            # result_pattern = re.compile(r'- \[ \] ID-(?P<id>\d+)\n(?P<description>.*?)(?=\nuploads/(?P<location>\S+)|$)', re.DOTALL)
 
             matches = re.finditer(vulnerability_pattern, md_content)
 
@@ -135,20 +134,12 @@ def filter_report(file_path: str):
                     "vulnerability_type": result_dict["vulnerability_type"],
                     "impact": result_dict["impact"],
                     "confidence": result_dict["confidence"],
-                    "recommendation": None,  # initialise recommendation
-                    "results": []
+                    "description": None,  # initialise description
+                    "recommendation": None  # initialise recommendation
                 }
 
-                # find matches for each result within the vulnerability
-                results_matches = re.finditer(result_pattern, result_dict["results"])
-                for result_match in results_matches:
-                    result = result_match.groupdict()
-                    vulnerability_info["results"].append({
-                        "ID": int(result["id"]),
-                        "description": result["description"].strip(),
-                        "location": result["location"]
-                    })
-
+                vulnerability_info["description"] = find_description(vulnerability_info["vulnerability_type"])
+                
                 # find recommendation for the vulnerability type
                 vulnerability_info["recommendation"] = find_recommendation(vulnerability_info["vulnerability_type"])
 
@@ -159,7 +150,7 @@ def filter_report(file_path: str):
             return vulnerabilities
     except Exception as e:
         # HTTPException with a 500 status code and the error details
-        print("Error {0}".format(str(e)))
+        print("Error: " + (str(e)))
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error occurred while filtering the report. Please try again.")
 
 def upload_report(report: dict):
@@ -209,7 +200,46 @@ def find_recommendation(check_name: str):
             return f'Recommendation not found for: {check_name}'
     except Exception as e:
         # HTTPException with a 500 status code and the error details
+        print(e)
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error fetching recommendation. Please try again.")
+
+def find_description(check_name: str):
+    """
+    Find description for a given check name.
+    
+    Params:
+        check_name (str): The name of the vulnerability to find the description for.
+    
+    Returns:
+        str: The description for the given vulnerability name.
+    """
+    try:
+        # the file path to slither wiki, basically .md file that contains description for the given vulnerability
+        # this file clone from Slither github page: https://github.com/crytic/slither/wiki/Detector-Documentation
+        
+        # open the wiki file
+        with open(file_path, 'r') as file:
+            # read the file
+            content = file.read()
+
+        # Define the pattern with named groups for extracting relevant information
+        pattern = re.compile(
+            fr'##\s.*?###\sConfiguration\n\* Check: `{check_name}`.*?###\sDescription\n(?P<description>.*?)(?=\n###\sExploit Scenario|$)',
+            re.DOTALL
+        )
+
+        # Search for the pattern in the content
+        match = re.search(pattern, content)
+
+        if match:
+            description = match.group('description').strip()
+            return description
+        else:
+            return f'Description not found for check: {check_name}'
+    except Exception as e:
+        # HTTPException with a 500 status code and the error details
+        print(e)
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error fetching description. Please try again.")
 
 # # func get current date and time as a string
 # def get_current_datetime():
