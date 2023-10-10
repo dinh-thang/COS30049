@@ -1,7 +1,7 @@
 # define db models for ORM
-from sqlalchemy import Column, Integer, String, ForeignKey, Text
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, Integer, String, Text, Date, Time, ForeignKey
 from sqlalchemy.orm import relationship
+from sqlalchemy.ext.declarative import declarative_base
 
 """
 NAMING CONVENTION
@@ -10,36 +10,43 @@ NAMING CONVENTION
 (3) name with 2 words above should use underscore "_"
 """
 
-""" NOTE: the model field below is based on assignment 1's website and CAN BE MODIFIED """
-
-""" NOTE: the model field below is based on assignment 1's website and CAN BE MODIFIED """
-
 Base = declarative_base()
 
-class Report(Base):
-    __tablename__ = "reports"
-    report_id = Column(Integer, primary_key=True, index=True)
-    contract_name = Column(String(255), index=True)
-    submission_date = Column(String(255))
-    submission_time = Column(String(255))
-    vulnerabilities = relationship("Vulnerability", back_populates="report", cascade="all, delete")
-
+# Vulnerabilities table
 class Vulnerability(Base):
-    __tablename__ = "vulnerabilities"
-    vuln_id = Column(Integer, primary_key=True, index=True)
+    __tablename__ = 'vulnerabilities'
+
+    vulnerability_id = Column(Integer, primary_key=True, autoincrement=True)
     vulnerability_type = Column(String(255))
     impact = Column(String(255))
     confidence = Column(String(255))
-    recommendation = Column(Text)
-    report_id = Column(Integer, ForeignKey("reports.report_id"))
-    results = relationship("Result", back_populates="vulnerability", cascade="all, delete")
-    report = relationship("Report", back_populates="vulnerabilities", cascade="all, delete")
-
-class Result(Base):
-    __tablename__ = "results"
-    results_id = Column(Integer, primary_key=True, index=True)
-    vuln_id = Column(Integer, ForeignKey("vulnerabilities.vuln_id"))
-    ID = Column(Integer)
     description = Column(Text)
-    location = Column(String(255))
-    vulnerability = relationship("Vulnerability", back_populates="results", cascade="all, delete")
+    recommendation = Column(Text)
+    
+    reports = relationship('ReportVulnerability', back_populates='vulnerability')
+
+# Reports table
+class Report(Base):
+    __tablename__ = 'reports'
+
+    report_id = Column(Integer, primary_key=True, autoincrement=True)
+    contract_name = Column(String(255))
+    submission_date = Column(Date)
+    submission_time = Column(Time)
+    number_of_vulnerabilities = Column(Integer, default=0)
+    
+    # Establishing a relationship with ReportVulnerability table
+    vulnerabilities = relationship('ReportVulnerability', back_populates='report')
+
+
+# ReportVulnerability table
+class ReportVulnerability(Base):
+    __tablename__ = 'reports_vulnerabilities'
+
+    report_vulnerability_id = Column(Integer, primary_key=True, autoincrement=True)
+    report_id = Column(Integer, ForeignKey('reports.report_id'))
+    vulnerability_id = Column(Integer, ForeignKey('vulnerabilities.vulnerability_id'))
+
+    # Establishing relationships with Reports and Vulnerabilities tables
+    report = relationship('Report', back_populates='vulnerabilities')
+    vulnerability = relationship('Vulnerability', back_populates='reports')
