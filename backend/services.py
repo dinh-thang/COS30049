@@ -214,6 +214,7 @@ def find_description(check_name: str):
         str: The description for the given vulnerability name.
     """
     try:
+        file_path = './slither.wiki/Detector-Documentation.md'
         # the file path to slither wiki, basically .md file that contains description for the given vulnerability
         # this file clone from Slither github page: https://github.com/crytic/slither/wiki/Detector-Documentation
         
