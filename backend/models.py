@@ -10,6 +10,10 @@ NAMING CONVENTION
 (3) name with 2 words above should use underscore "_"
 """
 
+""" NOTE: the model field below is based on assignment 1's website and CAN BE MODIFIED """
+
+""" NOTE: the model field below is based on assignment 1's website and CAN BE MODIFIED """
+
 Base = declarative_base()
 
 class Report(Base):
