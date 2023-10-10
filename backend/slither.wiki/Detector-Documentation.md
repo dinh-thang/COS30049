@@ -2053,13 +2053,15 @@ We also recommend avoiding complex `pragma` statement.
 ### Recommendation
 
 Deploy with any of the following Solidity versions:
-- 0.8.18
+
+* 0.8.18
 
 The recommendations take into account:
-- Risks related to recent releases
-- Risks of complex code generation changes
-- Risks of new language features
-- Risks of known bugs
+
+* Risks related to recent releases
+* Risks of complex code generation changes
+* Risks of new language features
+* Risks of known bugs
 
 Use a simple pragma version that allows any of these versions.
 Consider using the latest version of Solidity for testing.
