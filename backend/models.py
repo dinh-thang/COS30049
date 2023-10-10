@@ -24,19 +24,19 @@ class Report(Base):
     uploaded_date = Column(Date)
     uploaded_time = Column(Time)
 
-    vuls = relationship("vulnerabilities", back_populates="report")
+    res_vul = relationship("reports_vulnerabilities", back_populates="report")
 
 
-class Result(Base):
-    __tablename__ = "results"
+class ReportVulnerability(Base):
+    __tablename__ = "reports_vulnerabilities"
 
     id = Column(Integer, primary_key=True, index=True)
 
-    vul_id = Column(Integer, ForeignKey("vulnerabilities.id"))
-    vuls = relationship("vulnerabilities", back_populates="res")
+    report_id = Column(Integer, ForeignKey("reports.id"))
+    vul_id = Column(Integer, ForeignKey("vulnerabilities"))
 
-    description = Column(String)
-    location = Column(String)
+    report = relationship("reports", back_populates="res_vul")
+    vul = relationship("vulnerabilities", back_populates="vul_res")
 
 
 class Vulnerability(Base):
@@ -52,5 +52,8 @@ class Vulnerability(Base):
     confidence = Column(String)
     recommendation = Column(String(512))
 
-    res = relationship("results", back_populates="vuls")
+    vul_res = relationship("reports_vulnerabilities", back_populates="vul")
+
+
+
 
