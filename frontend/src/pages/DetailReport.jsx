@@ -1,7 +1,9 @@
 import { TITLE1_CSS_CONFIGURATION } from "../constant"; // import CSS config constants
 import { useParams, Link } from "react-router-dom"; // import necessary hook for URL parameter extraction
-import api from "../api";
 import { useEffect, useState } from "react";
+import ReactMarkdown from "react-markdown"
+import api from "../api";
+
 
 // This is the designated page for a single contract report
 // sample data is used here since the data retrieval method may varies when implementing back end
@@ -9,7 +11,6 @@ const DetailReport = () => {
   // the id of the report from URL parameters
   let { id } = useParams();
   const [report, setReports] = useState([])
-
   const getReport = async() => {
     const fetchedReport = await api.get("/reports/" + id)
     setReports(fetchedReport.data)
@@ -65,19 +66,19 @@ const DetailReport = () => {
             <ul className="list-disc pl-6 mb-2">
               {/* display vulnerability details */}
               <li>
-                <span className="font-bold">Vulnerability type: </span>{v.vulnerability_type}
+                <span className="font-bold">Vulnerability type: </span><ReactMarkdown children={v.vulnerability_type}/>
               </li>
               <li>
-                <span className="font-bold">Vulnerability impact: </span>{v.impact}
+                <span className="font-bold">Vulnerability impact: </span><ReactMarkdown children={v.impact}/>
               </li>
               <li>
-                <span className="font-bold">Vulnerability confidenct: </span>{v.confidence}
+                <span className="font-bold">Vulnerability confidenct: </span><ReactMarkdown children={v.confidence}/>
               </li>
               <li>
-                <span className="font-bold">Description: </span>{v.description}
+                <span className="font-bold">Description: </span><ReactMarkdown children={v.description}/>
               </li>
               <li>
-                <span className="font-bold">Recommendation: </span>{v.recommendation}
+                <span className="font-bold">Recommendation: </span><ReactMarkdown children={v.recommendation}/>
               </li>
             </ul>
           </section>
