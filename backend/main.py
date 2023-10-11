@@ -21,7 +21,7 @@ app.add_middleware(
 )
 
 # uploading a contract file and creating audit report
-@app.post("/upload_contract", status_code=status.HTTP_201_CREATED)
+@app.post("/upload_contract/", status_code=status.HTTP_201_CREATED)
 async def create_report(contract: UploadFile, db: Session = Depends(get_db)):
     """
     # Create report involve: 
@@ -84,13 +84,13 @@ async def create_report(contract: UploadFile, db: Session = Depends(get_db)):
 
 # Get all reports
 @app.get("/reports/", status_code=status.HTTP_200_OK)
-def get_reports(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
+async def get_reports(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
     reports = crud.get_all_reports(db, skip=skip, limit=limit)
     return reports
 
 # Get a specific report by ID
 @app.get("/reports/{report_id}", status_code=status.HTTP_200_OK)
-def get_report(report_id: int, db: Session = Depends(get_db)):
+async def get_report(report_id: int, db: Session = Depends(get_db)):
     return crud.get_report(db, report_id)
 
 # Delete a specific audit report

@@ -3,16 +3,19 @@ from sqlalchemy.orm import sessionmaker
 from models import Base
 from sqlalchemy_utils import database_exists, create_database
 
+from sqlalchemy.exc import OperationalError
+
 
 # replace 'user', 'password', 'localhost' with your own MySQL connection details
 # ! DB has been auto create if not exists
-MYSQL_USER = 'root'
-MYSQL_PASSWORD = 'root'
-MYSQL_HOST = 'localhost'
-MYSQL_DB = 'SmartContractAuditDB'
+MYSQL_USER = "root"
+MYSQL_PASSWORD = "root"
+MYSQL_HOST = "localhost"
+MYSQL_DB = "smartcontractauditdb"
+MYSQL_DB_URL = f"mysql+mysqlconnector://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_HOST}/{MYSQL_DB}"
 
 engine = create_engine(
-    f"mysql+mysqlconnector://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_HOST}/{MYSQL_DB}",   
+    MYSQL_DB_URL,
 )
 
 # auto create database if not exists
