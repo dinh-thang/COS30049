@@ -37,7 +37,7 @@ def upload_report(db: Session, report_data: dict):
         return report
     except Exception as e:
         db.rollback()
-        print("Error: ")
+        print(e)
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
     finally:
         db.close()
@@ -59,6 +59,8 @@ def create_report(db: Session, report_data: dict):
 # Function to save a new vulnerability to the database Vulnerability table
 def create_vulnerability(db: Session, vuln_data: dict):
     try:
+        results_data = vuln_data.pop('results', [])
+        
         new_vuln = Vulnerability(**vuln_data)
         db.add(new_vuln)
         db.commit()
@@ -70,14 +72,12 @@ def create_vulnerability(db: Session, vuln_data: dict):
     finally:
         db.close()
 
-# function to create a new report vulnerability association in the junction table
 
 # Function to create a new result and save it to the database Result table
 def create_result(db: Session, vuln_data: dict, report_id: int, vulnerability_id: int):
     try:
-        for result_data in vuln_data.get('results', []):
+        for result_data in vuln_data.pop('results', []):
             result = Result(
-                ID=result_data['ID'],
                 description=result_data['description'],
                 location=result_data['location'],
                 report_id=report_id,
@@ -85,6 +85,7 @@ def create_result(db: Session, vuln_data: dict, report_id: int, vulnerability_id
             )
             db.add(result)
             db.commit()
+            db.refresh(result)
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
@@ -126,6 +127,7 @@ def get_all_reports(db: Session, skip: int = 0, limit: int = 10):
         db.close()
 
 # function to retrieve a specific report from a database along with its associated vulnerabilities.
+
 def get_report(db: Session, report_id: int):
     try:
         # query the database to get a specific report with associated vulnerabilities
@@ -143,14 +145,21 @@ def get_report(db: Session, report_id: int):
 
         # extract details from the report and its associated vulnerabilities
         vulnerabilities_details = []
-        for report_vuln in report.vulnerabilities:
-            vuln = report_vuln.vulnerability
+        for result in report.vulnerabilities:
+            vuln = result.vulnerability
+
             vulnerabilities_details.append({
                 "vulnerability_type": vuln.vulnerability_type,
                 "impact": vuln.impact,
                 "confidence": vuln.confidence,
                 "description": vuln.description,
                 "recommendation": vuln.recommendation,
+                "results": [
+                    {
+                        "description": result.description,
+                        "location": result.location
+                    }
+                ]
             })
 
         # prepare the result with selected information
@@ -158,7 +167,7 @@ def get_report(db: Session, report_id: int):
             "contract_name": report.contract_name,
             "submission_date": report.submission_date.strftime('%d-%m-%Y'),
             "submission_time": report.submission_time.strftime('%I:%M %p'),
-            "number_of_vulnerabilities": report.number_of_vulnerabilities, 
+            "number_of_vulnerabilities": report.number_of_vulnerabilities,
             "vulnerabilities_details": vulnerabilities_details
         }
 
@@ -168,12 +177,13 @@ def get_report(db: Session, report_id: int):
         # raise HTTPException if exists
         raise e
     except Exception as e:
-        # raise an HTTPException with a 500 status code and error details if have other errors
+        # raise an HTTPException with a 500 status code and error details if there are other errors
         raise HTTPException(status_code=500, detail=f"Internal server error. Please try again.")
     finally:
         # ensure that the database session is closed no matter what
         db.close()
-
+  
+  
 # function to delete a speicific report from the database by its report_id
 def delete_report(db: Session, report_id: int):
     try:

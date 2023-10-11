@@ -119,7 +119,6 @@ def filter_report(file_path: str):
                         "ID": int(result["id"]),
                         "description": result["description"].strip(),
                         "location": result["location"],
-                        "description": result["description"],
                     })
 
                 vulnerability_info["description"] = find_description(vulnerability_info["vulnerability_type"])

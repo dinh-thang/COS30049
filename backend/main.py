@@ -67,8 +67,7 @@ async def create_report(contract: UploadFile, db: Session = Depends(get_db)):
         }
         
         # upload the filtered report to the database
-        # crud.upload_report(db, report_data)
-        return report_data
+        crud.upload_report(db, report_data)
         
         # returns a success message if the upload and analysis are completed successfully.
         return {"message": "Audit has been uploaded successfully."}
