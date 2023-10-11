@@ -38,8 +38,8 @@ const ReportHistory = () => {
 
     // console.log(a["submission_date"])
 
-    // Default sorting by other fields if the user does not select sort by "Severity"
-    return a[sortBy].toLowerCase() < b[sortBy].toLowerCase()
+    // Default sorting by other fields if the user does not select sort by "number of vuls"
+    return a[sortBy].toString().toLowerCase() < b[sortBy].toString().toLowerCase()
       ? -1 * sortingOrder // Sort in ascending order
       : 1 * sortingOrder; // Sort in descending order
   }
