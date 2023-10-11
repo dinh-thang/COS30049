@@ -7,6 +7,45 @@ from fastapi import HTTPException
 from datetime import datetime
 
 # upload the report to the database, this including adding data into all 3 tables: report, vulnerability, and report_vulnerability
+# def upload_report(db: Session, report_data: dict):
+#     vulnerabilities_data = report_data.pop('vulnerabilities_details', [])
+
+#     try:
+#         submission_date = datetime.strptime(report_data['submission_date'], "%d-%m-%Y").date()
+#         report_data['submission_date'] = submission_date
+
+#         submission_time = datetime.strptime(report_data['submission_time'], "%I:%M %p").time()
+#         report_data['submission_time'] = submission_time
+
+#         number_of_vulnerabilities = len(vulnerabilities_data)
+#         report_data['number_of_vulnerabilities'] = number_of_vulnerabilities
+
+#         report = create_report(db, report_data)
+
+#         for vuln_data in vulnerabilities_data:
+#             vulnerability_type = vuln_data.get('vulnerability_type')
+#             existing_vuln = db.query(Vulnerability).filter(Vulnerability.vulnerability_type == vulnerability_type).first()
+
+#             if existing_vuln:
+#                 vuln_id = existing_vuln.vulnerability_id
+#             else:
+#                 print(vuln_data)
+#                 not_pop_vuln_data = vuln_data
+
+#                 new_vuln = create_vulnerability(db, vuln_data)
+#                 print(vuln_data)
+#                 vuln_id = new_vuln.vulnerability_id
+
+#             create_result(db, not_pop_vuln_data, report.report_id, vuln_id)
+
+#         return report
+#     except Exception as e:
+#         db.rollback()
+#         print(e)
+#         raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
+#     finally:
+#         db.close()
+
 def upload_report(db: Session, report_data: dict):
     vulnerabilities_data = report_data.pop('vulnerabilities_details', [])
 
@@ -21,7 +60,8 @@ def upload_report(db: Session, report_data: dict):
         report_data['number_of_vulnerabilities'] = number_of_vulnerabilities
 
         report = create_report(db, report_data)
-
+        print("Created report:", report)  # Debug print statement
+        print ("report id", report.report_id) # Debug print statement
         for vuln_data in vulnerabilities_data:
             vulnerability_type = vuln_data.get('vulnerability_type')
             existing_vuln = db.query(Vulnerability).filter(Vulnerability.vulnerability_type == vulnerability_type).first()
@@ -29,10 +69,16 @@ def upload_report(db: Session, report_data: dict):
             if existing_vuln:
                 vuln_id = existing_vuln.vulnerability_id
             else:
-                new_vuln = create_vulnerability(db, vuln_data)
+                new_vuln = create_vulnerability(db, vuln_data.copy())
                 vuln_id = new_vuln.vulnerability_id
-
-            create_result(db, vuln_data, report.report_id, vuln_id)
+            
+            print("Created vuln:", vuln_id) # Debug print statement
+            print("Before inner loop")
+            
+            for result_data in vuln_data.get('results', []):
+                print("Inside inner loop")
+                print("Creating result for report:", report.report_id)  # Debug print statement
+                create_result(db, result_data, report.report_id, vuln_id)
 
         return report
     except Exception as e:
@@ -41,6 +87,7 @@ def upload_report(db: Session, report_data: dict):
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
     finally:
         db.close()
+
 
 # Function to create a new report and save it to the database Report table
 def create_report(db: Session, report_data: dict):
@@ -59,7 +106,7 @@ def create_report(db: Session, report_data: dict):
 # Function to save a new vulnerability to the database Vulnerability table
 def create_vulnerability(db: Session, vuln_data: dict):
     try:
-        results_data = vuln_data.pop('results', [])
+        vuln_data.pop('results') # remove the results list to insert vuln related data to the db
         
         new_vuln = Vulnerability(**vuln_data)
         db.add(new_vuln)
@@ -74,18 +121,21 @@ def create_vulnerability(db: Session, vuln_data: dict):
 
 
 # Function to create a new result and save it to the database Result table
-def create_result(db: Session, vuln_data: dict, report_id: int, vulnerability_id: int):
+def create_result(db: Session, result_data: dict, report_id: int, vulnerability_id: int):
     try:
-        for result_data in vuln_data.pop('results', []):
-            result = Result(
-                description=result_data['description'],
-                location=result_data['location'],
-                report_id=report_id,
-                vulnerability_id=vulnerability_id
-            )
-            db.add(result)
-            db.commit()
-            db.refresh(result)
+
+        # for result_data in vuln_data.get('results', []):
+        result = Result(
+            description=result_data['description'],
+            location=result_data['location'],
+            report_id=report_id,
+            vulnerability_id=vulnerability_id
+        )
+        print(result)
+        db.add(result)
+        db.commit()
+        print("Committed changes to the database.")  # Add this line for debugging
+        db.refresh(result)
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
