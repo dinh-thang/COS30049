@@ -35,7 +35,7 @@ async def create_report(contract: UploadFile, db: Session = Depends(get_db)):
     try:
         # validate if the file is provided
         if not contract:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No file provided.")
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No file provided. Please upload a .sol file.")
 
         # validate if the uploaded file is a .sol file
         if not contract.filename.endswith(".sol"):
@@ -67,7 +67,8 @@ async def create_report(contract: UploadFile, db: Session = Depends(get_db)):
         }
         
         # upload the filtered report to the database
-        crud.upload_report(db, report_data)
+        # crud.upload_report(db, report_data)
+        return report_data
         
         # returns a success message if the upload and analysis are completed successfully.
         return {"message": "Audit has been uploaded successfully."}
