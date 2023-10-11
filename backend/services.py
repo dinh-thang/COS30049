@@ -84,36 +84,44 @@ def analyze_contract(file_path: str, solidity_version: str):
 #  filter report file and extract vulnerability information from it
 def filter_report(file_path: str):
     try:
-        # open the file
         with open(file_path, "r") as f:
-            md_content = f.read() # get the content of the file
+            md_content = f.read()
 
-            # patterns to match vulnerability types, impact, confidence 
+            # patterns to match vulnerability types, impact, confidence, and results. 
             vulnerability_pattern = re.compile(
-                r"##\s*(?P<vulnerability_type>[\w-]+)\nImpact:\s*(?P<impact>\w+)\nConfidence:\s*(?P<confidence>\w+)"
+                r"##\s*(?P<vulnerability_type>[\w-]+)\nImpact:\s*(?P<impact>\w+)\nConfidence:\s*(?P<confidence>\w+)(?P<results>[\s\S]+?)(?=\n##|$)"
             )
 
-            matches = re.finditer(vulnerability_pattern, md_content) # find all matches from regexp
+            # one vuln can have many results with different locations within the contract
+            result_pattern = re.compile(r'- \[ \] ID-(?P<id>\d+)\n(?P<description>.*?)(?=\nuploads/(?P<location>\S+)|$)', re.DOTALL)
 
-            vulnerabilities = [] # initialise the list of vulnerabilities
 
-            # iterate over the matches and extract the vulnerability information
+            matches = re.finditer(vulnerability_pattern, md_content)
+
+            vulnerabilities = []
+
             for match in matches:
-                # match.groupdict() to get the dictionary of named groups from regexp matches
                 result_dict = match.groupdict()
-                
-                # dictionary is used to store information about each vulnerability extracted from the markdown file.
                 vulnerability_info = {
                     "vulnerability_type": result_dict["vulnerability_type"],
                     "impact": result_dict["impact"],
                     "confidence": result_dict["confidence"],
                     "description": None,  # initialise description
-                    "recommendation": None  # initialise recommendation
+                    "recommendation": None,  # initialise recommendation
+                    "results": []
                 }
 
-                # find description of the vulnerability type
+                # find matches for each result within the vulnerability
+                results_matches = re.finditer(result_pattern, result_dict["results"])
+                for result_match in results_matches:
+                    result = result_match.groupdict()
+                    vulnerability_info["results"].append({
+                        "ID": int(result["id"]),
+                        "description": result["description"].strip(),
+                        "location": result["location"],
+                    })
+
                 vulnerability_info["description"] = find_description(vulnerability_info["vulnerability_type"])
-                
                 # find recommendation for the vulnerability type
                 vulnerability_info["recommendation"] = find_recommendation(vulnerability_info["vulnerability_type"])
 
@@ -122,9 +130,11 @@ def filter_report(file_path: str):
 
             # return the list of vulnerabilities
             return vulnerabilities
-    except Exception as e: # error handling
+    except Exception as e:
         # HTTPException with a 500 status code and the error details
+        print(e)
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error occurred while filtering the report. Please try again.")
+
 
 # Find the recommendation for a given check name (i.e., vulnerability).
 def find_recommendation(check_name: str):
@@ -154,6 +164,7 @@ def find_recommendation(check_name: str):
         return f'Recommendation not found for: {check_name}'
     except Exception as e: # error handling
         # HTTPException with a 500 status code and the error details
+        print (e)
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error fetching recommendation. Please try again.")
 
 # Find description for a given check (i.e., vulnerability) name.
@@ -183,6 +194,7 @@ def find_description(check_name: str):
         return f'Description not found for check: {check_name}'
     except Exception as e:
         # HTTPException with a 500 status code and the error details
+        print (e)
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Error fetching description. Please try again.")
 
 # get the current date in the format DD-MM-YYYY.

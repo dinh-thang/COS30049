@@ -13,7 +13,7 @@ from sqlalchemy.exc import OperationalError
 MYSQL_USER = "root"
 MYSQL_PASSWORD = "root"
 MYSQL_HOST = "localhost"
-MYSQL_DB = "smartcontractauditdb"
+MYSQL_DB = "testresult"
 MYSQL_DB_URL = f"mysql+mysqlconnector://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_HOST}/{MYSQL_DB}"
 
 engine = create_engine(

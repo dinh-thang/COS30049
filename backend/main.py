@@ -35,7 +35,7 @@ async def create_report(contract: UploadFile, db: Session = Depends(get_db)):
     try:
         # validate if the file is provided
         if not contract:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No file provided.")
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No file provided. Please upload a .sol file.")
 
         # validate if the uploaded file is a .sol file
         if not contract.filename.endswith(".sol"):

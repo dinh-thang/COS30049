@@ -23,8 +23,8 @@ class Vulnerability(Base):
     description = Column(Text)
     recommendation = Column(Text)
     
-    # establishing a one-to-many relationship with ReportVulnerability table
-    reports = relationship('ReportVulnerability', back_populates='vulnerability')
+    # establishing a one-to-many relationship with Result table
+    reports = relationship('Result', back_populates='vulnerability')
 
 # Reports table
 class Report(Base):
@@ -36,18 +36,19 @@ class Report(Base):
     submission_time = Column(Time)
     number_of_vulnerabilities = Column(Integer, default=0)
     
-    # one-to-many relationship with ReportVulnerability table
-    vulnerabilities = relationship('ReportVulnerability', back_populates='report')
+    # one-to-many relationship with Result table
+    vulnerabilities = relationship('Result', back_populates='report')
 
+# Result table
+class Result(Base):
+    __tablename__ = 'results'
 
-# ReportVulnerability table
-class ReportVulnerability(Base):
-    __tablename__ = 'reports_vulnerabilities'
-
-    report_vulnerability_id = Column(Integer, primary_key=True, autoincrement=True)
+    result_id = Column(Integer, primary_key=True, autoincrement=True)
+    description = Column(Text)
+    location = Column(String(255))
     report_id = Column(Integer, ForeignKey('reports.report_id'))
     vulnerability_id = Column(Integer, ForeignKey('vulnerabilities.vulnerability_id'))
 
-    # one-to-many relationships with Reports and Vulnerabilities tables as this is junction table
+    # one-to-many relationships with Reports and Vulnerabilities tables as this is a junction table
     report = relationship('Report', back_populates='vulnerabilities')
-    vulnerability = relationship('Vulnerability', back_populates='reports')
+    vulnerability = relationship('Vulnerability', back_populates='reports')  # Fixed back_populates value
