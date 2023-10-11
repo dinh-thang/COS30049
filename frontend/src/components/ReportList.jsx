@@ -8,7 +8,7 @@ const ReportList = ({ reports, onDelete }) => {
     "Contract Name",
     "Submission Date",
     "Submission Time",
-    "Severity",
+    "Number of vulnerabilities",
     "Actions",
   ];
 
@@ -86,7 +86,7 @@ const ReportList = ({ reports, onDelete }) => {
                   {record.submissionTime}
                 </p>
                 <p>
-                  <span className="font-bold">Severity: </span>
+                  <span className="font-bold">Number of vulnerabilities: </span>
                   {record.severity}
                 </p>
                 <div>

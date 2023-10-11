@@ -32,25 +32,6 @@ const ReportHistory = () => {
   function sortReports(a, b) {
     let sortingOrder = orderBy === "asc" ? 1 : -1; // determine sorting order based on orderBy value
 
-    // sort reports based on the selected sort field
-    if (sortBy === "severity") {
-      // custom sorting for severity levels, otherwise, severity levels are ordered alphabetically
-      const severityOrder = {
-        Low: 0,
-        Medium: 1,
-        High: 2,
-      };
-
-      // compare severity levels using custom order
-      const severityComparison =
-        severityOrder[a.severity] - severityOrder[b.severity];
-
-      // if the severity levels are not the same, return the comparison result multiplied by the sorting order
-      if (severityComparison !== 0) {
-        return severityComparison * sortingOrder; // sort by severity using the custom order
-      }
-    }
-
     // Default sorting by other fields if the user does not select sort by "Severity"
     return a[sortBy].toLowerCase() < b[sortBy].toLowerCase()
       ? -1 * sortingOrder // Sort in ascending order

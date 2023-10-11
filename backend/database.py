@@ -1,3 +1,5 @@
+# this file defines the database connection and session management
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models import Base
@@ -24,7 +26,7 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 # create tables if they do not exist in the db
 Base.metadata.create_all(bind=engine)
 
-# Dependency to get the database session
+# dependency to get the database session
 def get_db():
     db = SessionLocal()
     try:

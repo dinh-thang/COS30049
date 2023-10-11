@@ -1,4 +1,4 @@
-# define db models for ORM
+# this file defines the database models/tables using SQLAlchemy's declarative base.
 from sqlalchemy import Column, Integer, String, Text, Date, Time, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
@@ -10,7 +10,7 @@ NAMING CONVENTION
 (3) name with 2 words above should use underscore "_"
 """
 
-Base = declarative_base()
+Base = declarative_base() # SQLalchemy base class
 
 # Vulnerabilities table
 class Vulnerability(Base):
@@ -23,6 +23,7 @@ class Vulnerability(Base):
     description = Column(Text)
     recommendation = Column(Text)
     
+    # establishing a one-to-many relationship with ReportVulnerability table
     reports = relationship('ReportVulnerability', back_populates='vulnerability')
 
 # Reports table
@@ -35,7 +36,7 @@ class Report(Base):
     submission_time = Column(Time)
     number_of_vulnerabilities = Column(Integer, default=0)
     
-    # Establishing a relationship with ReportVulnerability table
+    # one-to-many relationship with ReportVulnerability table
     vulnerabilities = relationship('ReportVulnerability', back_populates='report')
 
 
@@ -47,6 +48,6 @@ class ReportVulnerability(Base):
     report_id = Column(Integer, ForeignKey('reports.report_id'))
     vulnerability_id = Column(Integer, ForeignKey('vulnerabilities.vulnerability_id'))
 
-    # Establishing relationships with Reports and Vulnerabilities tables
+    # one-to-many relationships with Reports and Vulnerabilities tables as this is junction table
     report = relationship('Report', back_populates='vulnerabilities')
     vulnerability = relationship('Vulnerability', back_populates='reports')

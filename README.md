@@ -9,20 +9,45 @@ This project implements a web platform for auditing Solidity smart contracts usi
 - **Smart Contract Analysis**: Slither API
 - **Database**: MySQL
 
+## Project folder structure
+
+```bash
+group2-25/
+├── backend/                 # Backend application folder
+│   ├── slither.wiki/        # folder containing documentation clone from slither.wiki 
+│   │   └── Detector-Documentation.md  # Documentation file
+│   ├── uploads/             # folder to store uploaded contract files
+│   ├── __init__.py          # Python package initialiser
+│   ├── crud.py              # CRUD operations for database interactions
+│   ├── database.py          # Database connection and session management
+│   ├── main.py              # Main entry point for the backend application
+│   ├── models.py            # Database models using SQLAlchemy's declarative base
+│   ├── services.py          # Utility functions and services for the application logic
+│   └── requirements.txt     # List of required Python packages for the backend
+├── frontend/                # Frontend application folder
+│   ├── node_modules/        # dependencies for the frontend
+│   ├── public/             
+│   └── src/                 # Source code folder for the frontend
+│       ├── assets/          # static assets folder for the frontend
+│       ├── components/      # Reusable React components
+│       ├── pages/           # React components representing pages of the application
+│       ├── api.js           # handles API calls from the frontend
+│       ├── App.js           
+│       ├── constant.js      # defining constants that are used across the frontend application
+│       ├── index.css        
+│       ├── index.js         
+│       ├── package-lock.json  
+│       ├── package.json      # Node.js package file
+│       └── tailwind.config.js  # Configuration file for Tailwind CSS
+└── README.md                # Project README file
+```
+
 ## Setup
 
 ### Prerequisites
 
 - Node.js
 - Python 3
-
-### Installation
-
-Clone the repo
-
-```bash 
-git clone https://github.com/dinh-thang/COS30049-Smart-Contract-Audit-System.git
-```
 
 #### Frontend
 
