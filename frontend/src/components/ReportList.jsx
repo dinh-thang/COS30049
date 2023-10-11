@@ -35,23 +35,23 @@ const ReportList = ({ reports, onDelete }) => {
               {/* looping through all the reportData records for table body */}
               {reports.map((record, index) => (
                 <tr key={index} className="even:bg-slate-100 text-center">
-                  <td className="border px-4 py-2">{record.reportId}</td>
-                  <td className="border px-4 py-2">{record.contractName}</td>
-                  <td className="border px-4 py-2">{record.submissionDate}</td>
-                  <td className="border px-4 py-2">{record.submissionTime}</td>
-                  <td className="border px-4 py-2">{record.severity}</td>
+                  <td className="border px-4 py-2">{record.report_id}</td>
+                  <td className="border px-4 py-2">{record.contract_name}</td>
+                  <td className="border px-4 py-2">{record.submission_date}</td>
+                  <td className="border px-4 py-2">{record.submission_time}</td>
+                  <td className="border px-4 py-2">{record.number_of_vulnerabilities}</td>
                   <td className="border px-4 py-2 flex flex-col lg:flex-row justify-center">
                     {/* Link to detailed report page */}
                     <Link
                       className="text-blue-500 hover:underline"
-                      to={"/report/" + (record.reportId - 1)}
+                      to={"/report/" + (record.report_id - 1)}
                     >
                       Details
                     </Link>
                     {/* delete button */}
                     <button
                       className="text-red-500 lg:ml-4 hover:underline mt-1 lg:mt-0"
-                      onClick={() => onDelete(record.reportId)}
+                      onClick={() => onDelete(record.report_id)}
                     >
                       Delete
                     </button>
@@ -71,36 +71,36 @@ const ReportList = ({ reports, onDelete }) => {
               >
                 <p>
                   <span className="font-bold">Report ID: </span>
-                  {record.reportId}
+                  {record.report_id}
                 </p>
                 <p>
                   <span className="font-bold">Contract Name: </span>
-                  {record.contractName}
+                  {record.contract_name}
                 </p>
                 <p>
                   <span className="font-bold">Submission Date: </span>
-                  {record.submissionDate}
+                  {record.submission_date}
                 </p>
                 <p>
                   <span className="font-bold">Submission Time: </span>
-                  {record.submissionTime}
+                  {record.submission_time}
                 </p>
                 <p>
                   <span className="font-bold">Number of vulnerabilities: </span>
-                  {record.severity}
+                  {record.number_of_vulnerabilities}
                 </p>
                 <div>
                   {/* Link to detailed report page */}
                   <Link
                     className="text-blue-500"
-                    to={"/report/" + (record.reportId - 1)}
+                    to={"/report/" + (record.report_id - 1)}
                   >
                     Details
                   </Link>
                   {/* delete button */}
                   <button
                     className="text-red-500 ml-5"
-                    onClick={() => onDelete(record.reportId)}
+                    onClick={() => onDelete(record.report_id)}
                   >
                     Delete
                   </button>

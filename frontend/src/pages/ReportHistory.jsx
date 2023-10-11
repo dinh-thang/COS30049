@@ -1,18 +1,22 @@
-import { useState } from "react";
-// import other components
+import { TITLE1_CSS_CONFIGURATION } from "../constant";
+import { useEffect, useState } from "react";
 import Search from "../components/Search";
 import ReportList from "../components/ReportList";
-import { TITLE1_CSS_CONFIGURATION } from "../constant";
+import api from "../api";
 // This is a sample hard-coded data for the report page, the data here is for demo purpose and the vulnerability data are taken from Slither documentation.
-import reportData from "../assets/reportData.json";
 
 // this component represents a page that displays a list of reports
 const ReportHistory = () => {
   // state variables to manage various aspects of the component's state
-  const [reports, setReports] = useState(reportData); // to manage report data
+  const [reports, setReports] = useState([]); // to manage report data
   const [query, setQuery] = useState(""); // to manage search query, by default, the query is empty
-  const [sortBy, setSortBy] = useState("submissionDate"); // to manage sort field, by default, sort by submission date field
+  const [sortBy, setSortBy] = useState("submission_date"); // to manage sort field, by default, sort by submission date field
   const [orderBy, setOrderBy] = useState("asc"); // to manage sort order, by default, the report list is displayed in ascending order
+
+  // trigger after the component is mounted
+  useEffect(() => {
+    getAllReportData()
+  }, [])
 
   // function to check if a report matches the current query
   function matchesQuery(report) {
@@ -20,11 +24,11 @@ const ReportHistory = () => {
     // convert both report field and query to lower case for case-insensitive search
     // check if each field e.g. contract name, submission time, etc. contains the query
     return (
-      report.contractName.toLowerCase().includes(query.toLowerCase()) ||
-      report.severity.toLowerCase().includes(query.toLowerCase()) ||
-      report.reportId.includes(query) ||
-      report.submissionDate.includes(query) ||
-      report.submissionTime.toLowerCase().includes(query.toLowerCase())
+      report.report_id.toString().includes(query) ||
+      report.contract_name.toLowerCase().includes(query.toLowerCase()) ||
+      report.number_of_vulnerabilities.toLowerCase().includes(query.toLowerCase()) ||
+      report.submission_date.includes(query) ||
+      report.submission_time.toLowerCase().includes(query.toLowerCase())
     );
   }
 
@@ -32,10 +36,20 @@ const ReportHistory = () => {
   function sortReports(a, b) {
     let sortingOrder = orderBy === "asc" ? 1 : -1; // determine sorting order based on orderBy value
 
+    // console.log(a["submission_date"])
+
     // Default sorting by other fields if the user does not select sort by "Severity"
     return a[sortBy].toLowerCase() < b[sortBy].toLowerCase()
       ? -1 * sortingOrder // Sort in ascending order
       : 1 * sortingOrder; // Sort in descending order
+  }
+
+  // get all the report each time the page is rendered
+  async function getAllReportData() {
+    const reportData = await api.get("/reports/")
+
+    setReports(reportData.data)
+    // console.log(reportData.data)
   }
 
   // filter and sort the reports based on search and sort criteria

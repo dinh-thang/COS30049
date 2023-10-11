@@ -34,26 +34,26 @@ const DropDown = ({
           className={`${menuItemStyle} border-gray-1 border-b-2`}
           // onClick event handler to perform some action based on user's selection
           // this event allows the user to select a sorting option or ordering preference
-          onClick={() => handleSortByChange("contractName")}
+          onClick={() => handleSortByChange("contract_name")}
         >
           {/* conditionally render the checkmark if the sorting option is chosen, indicating selected state of the menu option   */}
-          Contract Name {selectedSortBy === "contractName" && <BiCheck />}
+          Contract Name {selectedSortBy === "contract_name" && <BiCheck />}
         </li>
         {/* Menu item for sorting by vulnerability level (i.e. severity) */}
         <li
           className={`${menuItemStyle} border-gray-1 border-b-2`}
-          onClick={() => handleSortByChange("severity")}
+          onClick={() => handleSortByChange("number_of_vulnerabilities")}
         >
           {/* conditionally render the checkmark if the sorting option is chosen, indicating selected state of the menu option   */}
-          Severity {selectedSortBy === "severity" && <BiCheck />}
+          Severity {selectedSortBy === "number_of_vulnerabilities" && <BiCheck />}
         </li>
         {/* Menu item for sorting by submission date */}
         <li
           className={`${menuItemStyle} border-gray-1 border-b-2`}
-          onClick={() => handleSortByChange("submissionDate")}
+          onClick={() => handleSortByChange("submission_date")}
         >
           {/* conditionally render the checkmark if the sorting option is chosen, indicating selected state of the menu option   */}
-          Date {selectedSortBy === "submissionDate" && <BiCheck />}
+          Date {selectedSortBy === "submission_date" && <BiCheck />}
         </li>
         {/* Menu item for ascending ordering */}
         <li
