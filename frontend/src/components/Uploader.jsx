@@ -1,5 +1,6 @@
 import { useState } from "react";
 import api from "../api";
+
 // File uploader component allows the user to upload smart contract files
 const Uploader = () => {
   // store the selected file using useState
@@ -10,15 +11,35 @@ const Uploader = () => {
   const handleFileUpload = async(e) => {
     e.preventDefault()
     
-    const status = await api.post("/upload_contract/", selectedFile);
-    setUploadStatus(status);
+    const formData = new FormData()
+    formData.append("contract", selectedFile)
+
+    try {
+      const status = await api.post(
+        "/upload_contract/",
+        formData
+      )
+      .then(response => {
+        if (response.status == 422) {
+          return "Invalid input data encoding format"
+        } else {
+          // set new status
+          setUploadStatus(response.data)
+
+          // update the placeholder text
+          const element = document.getElementById("status-notification").
+          element.textContent({uploadStatus})
+        }
+      })
+      
+    } 
+    catch (e) {
+      console.error(e)
+    }
   };
 
   // function to update the file state
   const handleFileSelection = (e) => {
-    // tesing purpose
-    // console.log(selectedFile);
-
     // e.target refers to the DOM element triggered the event (input element)
     // e.target.files is an object containing selected files
     const file = e.target.files[0];
@@ -28,7 +49,7 @@ const Uploader = () => {
   };
 
   return (
-    <form id="upload-form" className="flex flex-col py-6 px-9">
+    <form id="upload-form" className="flex flex-col py-6 px-9" onSubmit={handleFileUpload} encType="multipart/form-data">
       <div className="flex justify-center mb-8">
         <label
           htmlFor="upload-file"
@@ -36,7 +57,7 @@ const Uploader = () => {
         >
           {selectedFile !== null ? (
             <div>
-              <p>{selectedFile.name}</p>
+              <p id="status-notification">{selectedFile.name}</p>
               {/* insert a file icon for beautifulness */}
             </div>
           ) : (
@@ -67,7 +88,7 @@ const Uploader = () => {
         {/* submit button */}
         <button
           className="items-center inline-block transition-colors duration-200 bg-blue-500 hover:bg-blue-600 text-white hover:text-gray-200 rounded py-2 px-4 w-1/2"
-          onClick={handleFileUpload}
+          type="submit"
         >
           Upload
         </button>

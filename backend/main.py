@@ -1,7 +1,7 @@
-from fastapi import FastAPI, UploadFile, HTTPException, status, Depends
+from fastapi import FastAPI, UploadFile, HTTPException, status, Depends, File
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
-from database import SessionLocal, get_db
+from database import get_db
 import services
 import crud
 
@@ -31,7 +31,7 @@ async def create_report(contract: UploadFile, db: Session = Depends(get_db)):
         (4) filter_report(result.md), return the filtered report (parse audit report using regexp)
         (5) upload_report(report), upload the filtered report to the database and return status code
     This function then return the status code of (3) or some kind of notification
-    """    
+    """   
     try:
         # validation
         if not contract:
