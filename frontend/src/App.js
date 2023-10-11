@@ -12,8 +12,22 @@ import ReportHistory from "./pages/ReportHistory";
 import NotFound from "./pages/NotFound";
 import Layout from "./components/Layout";
 import DetailReport from "./pages/DetailReport";
+import api from "./api";
+import { useState } from "react";
 
 const App = () => {
+  const [reportList, setReportList] = useState([])
+
+  // return a list of report 
+  const getAllReports = async() => {
+    const reportList = await api.get("/reports/");
+    setReportList(reportList);
+    // return reportList;
+  }
+
+  const getAReport = async() => {
+  }
+
   return (
     // wrap the whole application in the Layout component to have consistent layout across all pages
     <Layout>
