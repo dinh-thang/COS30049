@@ -1,34 +1,15 @@
 # this file defines the database models/tables using SQLAlchemy's declarative base.
+
 from sqlalchemy import Column, Integer, String, Text, Date, Time, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 
-"""
-NAMING CONVENTION
-(1) table name is in plural form
-(2) column name is in singular form
-(3) name with 2 words above should use underscore "_"
-"""
+Base = declarative_base()
 
-Base = declarative_base() # SQLalchemy base class
-
-# ReportVulnerability table
-class Result(Base):
-    __tablename__ = 'results'
-
-    result_id = Column(Integer, primary_key=True, autoincrement=True)
-    report_id = Column(Integer, ForeignKey('reports.report_id'))
-    vulnerability_id = Column(Integer, ForeignKey('vulnerabilities.vulnerability_id'))
-
-    description = Column(Text)
-    location = Column(Text)
-
-    # one-to-many relationships with Reports and Vulnerabilities tables as this is junction table
-    # report = relationship('Report', back_populates='vulnerabilities')
-    # vulnerability = relationship('Vulnerability', back_populates='reports')
-
-# Vulnerabilities table
 class Vulnerability(Base):
+    """
+    Table to store information about vulnerabilities.
+    """
     __tablename__ = 'vulnerabilities'
 
     vulnerability_id = Column(Integer, primary_key=True, autoincrement=True)
@@ -38,11 +19,12 @@ class Vulnerability(Base):
     description = Column(Text)
     recommendation = Column(Text)
     
-    # establishing a one-to-many relationship with Result table
     reports = relationship('Result', back_populates='vulnerability')
 
-# Reports table
 class Report(Base):
+    """
+    Table to store information about reports.
+    """
     __tablename__ = 'reports'
 
     report_id = Column(Integer, primary_key=True, autoincrement=True)
@@ -51,14 +33,13 @@ class Report(Base):
     submission_time = Column(Time)
     number_of_vulnerabilities = Column(Integer, default=0)
     
-    # one-to-many relationship with Result table
     vulnerabilities = relationship('Result', back_populates='report')
 
-# Result table
 class Result(Base):
+    """
+    Table to store information about results and the relationship between reports and vulnerabilities.
+    """
     __tablename__ = 'results'
-    __table_args__ = {'keep_existing': True}
-
 
     result_id = Column(Integer, primary_key=True, autoincrement=True)
     description = Column(Text)
@@ -66,6 +47,5 @@ class Result(Base):
     report_id = Column(Integer, ForeignKey('reports.report_id'))
     vulnerability_id = Column(Integer, ForeignKey('vulnerabilities.vulnerability_id'))
 
-    # one-to-many relationships with Reports and Vulnerabilities tables as this is a junction table
     report = relationship('Report', back_populates='vulnerabilities')
-    vulnerability = relationship('Vulnerability', back_populates='reports')  # Fixed back_populates value
+    vulnerability = relationship('Vulnerability', back_populates='reports')

@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import Search from "../components/Search";
 import ReportList from "../components/ReportList";
 import api from "../api";
-// This is a sample hard-coded data for the report page, the data here is for demo purpose and the vulnerability data are taken from Slither documentation.
 
 // this component represents a page that displays a list of reports
 const ReportHistory = () => {
@@ -27,7 +26,7 @@ const ReportHistory = () => {
     return (
       report.report_id.toString().includes(query) ||
       report.contract_name.toLowerCase().includes(query.toLowerCase()) ||
-      report.number_of_vulnerabilities.toLowerCase().includes(query.toLowerCase()) ||
+      report.number_of_vulnerabilities.includes(query) ||
       report.submission_date.includes(query) ||
       report.submission_time.toLowerCase().includes(query.toLowerCase())
     );

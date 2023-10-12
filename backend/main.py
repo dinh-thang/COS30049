@@ -24,14 +24,13 @@ app.add_middleware(
 @app.post("/upload_contract", status_code=status.HTTP_201_CREATED)
 async def create_report(contract: UploadFile, db: Session = Depends(get_db)):
     """
-    # Create report involve: 
-        (1) save the uploaded file to the 'uploads' directory
-        (2) extract the solidity version - to solc-select cmd
-        (3) create the report using analyze_contract(contract), return .md file path
-        (4) filter_report(result.md), return the filtered report (parse audit report using regexp)
-        (5) upload_report(report), upload the filtered report to the database and return status code
-    This function then return the status code of (3) or some kind of notification
-    """   
+    Create report involving:
+        (1) Save the uploaded file to the 'uploads' directory
+        (2) Extract the solidity version - to solc-select cmd
+        (3) Create the report using analyze_contract(contract), return .md file path
+        (4) Filter_report(result.md), return the filtered report (parse audit report using regexp)
+        (5) Upload_report(report), upload the filtered report to the database and return status code
+    """  
     try:
         # validate if the file is provided
         if not contract:
@@ -76,21 +75,19 @@ async def create_report(contract: UploadFile, db: Session = Depends(get_db)):
         raise e
     except Exception as e:
         # 500 status code and generic error details
-        print (e)
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal server error. Please try again.")
 
-# Get all reports endpoint, accepts optional parameters skip and limit to control pagination
 @app.get("/reports/", status_code=status.HTTP_200_OK)
 async def get_reports(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
-    reports = crud.get_all_reports(db, skip, limit)
-    return reports
+    """Get all reports endpoint, accepts optional parameters skip and limit to control pagination."""
+    return crud.get_all_reports(db, skip, limit)
 
-# Get a specific report by ID
 @app.get("/reports/{report_id}", status_code=status.HTTP_200_OK)
 async def get_report(report_id: int, db: Session = Depends(get_db)):
+    """Get a specific report by ID."""
     return crud.get_report(db, report_id)
 
-# Delete a specific audit report by ID endpoint, returns a response with a status code of 204 (NO_CONTENT), indicating a successful deletion.
 @app.delete("/reports/{report_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_report(report_id: int, db: Session = Depends(get_db)):
+    """Delete a specific audit report by ID endpoint, returns a response with a status code of 204 (NO_CONTENT), indicating a successful deletion."""
     return crud.delete_report(db, report_id)

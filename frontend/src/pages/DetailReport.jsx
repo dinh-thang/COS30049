@@ -46,7 +46,7 @@ const DetailReport = () => {
             {report.submission_time}
           </li>
           <li>
-            <span className="font-bold">Severity: </span> {report.number_of_vulnerabilities}
+            <span className="font-bold">Number of vulnerabilities: </span> {report.number_of_vulnerabilities}
           </li>
         </ul>
       </section>

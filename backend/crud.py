@@ -2,264 +2,208 @@
 
 from sqlalchemy.orm import Session, joinedload
 from models import Report, Vulnerability, Result
-from schema import ReportData
 from fastapi import HTTPException
 from datetime import datetime
 
+# define decorator that provides consistent error handling and cleanup for database operations.
+def db_handler(func):
+    def wrapper(db: Session, *args, **kwargs):
+        try:
+            return func(db, *args, **kwargs)
+        except HTTPException as e: # raise specific HTTPException if exists
+            raise e
+        except Exception as e: # other generic errors
+            db.rollback() # rollback the changes in the db if something wrong happened
+            raise HTTPException(status_code=500, detail=f"Internal Server Error. Please try again.") 
+        finally:
+            # ensure that the database is closed no matter what
+            db.close()
+    return wrapper
+
 # upload the report to the database, this including adding data into all 3 tables: report, vulnerability, and report_vulnerability
-# def upload_report(db: Session, report_data: dict):
-#     vulnerabilities_data = report_data.pop('vulnerabilities_details', [])
-
-#     try:
-#         submission_date = datetime.strptime(report_data['submission_date'], "%d-%m-%Y").date()
-#         report_data['submission_date'] = submission_date
-
-#         submission_time = datetime.strptime(report_data['submission_time'], "%I:%M %p").time()
-#         report_data['submission_time'] = submission_time
-
-#         number_of_vulnerabilities = len(vulnerabilities_data)
-#         report_data['number_of_vulnerabilities'] = number_of_vulnerabilities
-
-#         report = create_report(db, report_data)
-
-#         for vuln_data in vulnerabilities_data:
-#             vulnerability_type = vuln_data.get('vulnerability_type')
-#             existing_vuln = db.query(Vulnerability).filter(Vulnerability.vulnerability_type == vulnerability_type).first()
-
-#             if existing_vuln:
-#                 vuln_id = existing_vuln.vulnerability_id
-#             else:
-#                 print(vuln_data)
-#                 not_pop_vuln_data = vuln_data
-
-#                 new_vuln = create_vulnerability(db, vuln_data)
-#                 print(vuln_data)
-#                 vuln_id = new_vuln.vulnerability_id
-
-#             create_result(db, not_pop_vuln_data, report.report_id, vuln_id)
-
-#         return report
-#     except Exception as e:
-#         db.rollback()
-#         print(e)
-#         raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
-#     finally:
-#         db.close()
-
+@db_handler # use the decorator for error handling
 def upload_report(db: Session, report_data: dict):
+    # remove the vuln list to insert only report-related data to the db
     vulnerabilities_data = report_data.pop('vulnerabilities_details', [])
+    # convert submission_date and submission_time to datetime object
+    submission_date = datetime.strptime(report_data['submission_date'], "%d-%m-%Y").date()
+    submission_time = datetime.strptime(report_data['submission_time'], "%I:%M %p").time()
+    
+    # reassign submission_date and submission_time to the report
+    report_data['submission_date'] = submission_date 
+    report_data['submission_time'] = submission_time
+    
+    # calculate the number of vulnerabilities
+    number_of_vulnerabilities = len(vulnerabilities_data)
+    # reassign number_of_vulnerabilities to the report
+    report_data['number_of_vulnerabilities'] = number_of_vulnerabilities
 
-    try:
-        submission_date = datetime.strptime(report_data['submission_date'], "%d-%m-%Y").date()
-        report_data['submission_date'] = submission_date
+    report = create_report(db, report_data) # save the report to the database
 
-        submission_time = datetime.strptime(report_data['submission_time'], "%I:%M %p").time()
-        report_data['submission_time'] = submission_time
+    # iterate through each vulnerability
+    for vuln_data in vulnerabilities_data:
+        # get the vulnerability type from each vuln in the list
+        vulnerability_type = vuln_data.get('vulnerability_type')
+        # query the database to see if the vulnerability already exists in Vulnerability table
+        existing_vuln = db.query(Vulnerability).filter(Vulnerability.vulnerability_type == vulnerability_type).first()
 
-        number_of_vulnerabilities = len(vulnerabilities_data)
-        report_data['number_of_vulnerabilities'] = number_of_vulnerabilities
-
-        report = create_report(db, report_data)
-        print("Created report:", report)  # Debug print statement
-        print ("report id", report.report_id) # Debug print statement
-        for vuln_data in vulnerabilities_data:
-            vulnerability_type = vuln_data.get('vulnerability_type')
-            existing_vuln = db.query(Vulnerability).filter(Vulnerability.vulnerability_type == vulnerability_type).first()
-
-            if existing_vuln:
-                vuln_id = existing_vuln.vulnerability_id
-            else:
-                new_vuln = create_vulnerability(db, vuln_data.copy())
-                vuln_id = new_vuln.vulnerability_id
-            
-            print("Created vuln:", vuln_id) # Debug print statement
-            print("Before inner loop")
-            
-            for result_data in vuln_data.get('results', []):
-                print("Inside inner loop")
-                print("Creating result for report:", report.report_id)  # Debug print statement
-                create_result(db, result_data, report.report_id, vuln_id)
-
-        return report
-    except Exception as e:
-        db.rollback()
-        print(e)
-        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
-    finally:
-        db.close()
+        # if the vulnerability does not exist, create a new one, otherwise skip and get the vuln_id 
+        if existing_vuln:
+            vuln_id = existing_vuln.vulnerability_id
+        else:
+            # copy() is called to ensure that the vuln_data remain the same after calling create_vulnerability
+            new_vuln = create_vulnerability(db, vuln_data.copy()) 
+            vuln_id = new_vuln.vulnerability_id # get the vuln_id from the new vuln
+        
+        # iterate through each result in the vulnerability
+        for result_data in vuln_data.get('results', []):
+            # save each result to the database
+            create_result(db, result_data, report.report_id, vuln_id)
+    
+    # return the report
+    return report
 
 
 # Function to create a new report and save it to the database Report table
+@db_handler
 def create_report(db: Session, report_data: dict):
-    try:
-        report = Report(**report_data)
-        db.add(report)
-        db.commit()
-        db.refresh(report)
-        return report
-    except Exception as e:
-        db.rollback()
-        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
-    finally:
-        db.close()
+    #  creates a new Report object using the report_data,
+    report = Report(**report_data)
+    # add the report to the database
+    db.add(report)
+    db.commit() # commit the changes
+    db.refresh(report) # refresh the database with the new report 
+    return report
 
 # Function to save a new vulnerability to the database Vulnerability table
+@db_handler
 def create_vulnerability(db: Session, vuln_data: dict):
-    try:
-        vuln_data.pop('results') # remove the results list to insert vuln related data to the db
-        
-        new_vuln = Vulnerability(**vuln_data)
-        db.add(new_vuln)
-        db.commit()
-        db.refresh(new_vuln)
-        return new_vuln
-    except Exception as e:
-        db.rollback()
-        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
-    finally:
-        db.close()
+    # remove the results list to insert vuln related data to the db
+    vuln_data.pop('results') 
+    # create a new Vulnerability object using the vuln_data
+    new_vuln = Vulnerability(**vuln_data)
+    # add the vuln to the database
+    db.add(new_vuln)
+    db.commit() # commit the changes
+    db.refresh(new_vuln) # refresh the database with the new vuln 
+    return new_vuln
 
 
 # Function to create a new result and save it to the database Result table
+@db_handler
 def create_result(db: Session, result_data: dict, report_id: int, vulnerability_id: int):
-    try:
+    # creates a new Result object using the result data and the provided IDs
+    result = Result(
+        description=result_data['description'],
+        location=result_data['location'],
+        report_id=report_id,
+        vulnerability_id=vulnerability_id
+    )
+    db.add(result)
+    db.commit()
+    db.refresh(result)
 
-        # for result_data in vuln_data.get('results', []):
-        result = Result(
-            description=result_data['description'],
-            location=result_data['location'],
-            report_id=report_id,
-            vulnerability_id=vulnerability_id
-        )
-        print(result)
-        db.add(result)
-        db.commit()
-        print("Committed changes to the database.")  # Add this line for debugging
-        db.refresh(result)
-    except Exception as e:
-        db.rollback()
-        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
-    finally:
-        db.close()
 
 # function to retrieves a list of reports from the database with pagination.
+@db_handler
 def get_all_reports(db: Session, skip: int = 0, limit: int = 10):
-    try:
-        # query the database to get a list of reports with pagination
-        reports = db.query(Report).offset(skip).limit(limit).all()
+    # query the database to get a list of reports with pagination
+    reports = db.query(Report).offset(skip).limit(limit).all()
 
-        # check if there are no reports
-        if not reports:
-            return {
-                "message": "No reports found. Please upload a report to view details."
-            }
+    # check if there are no reports
+    if not reports:
+        return {
+            "message": "No reports found. Please upload a report to view details."
+        }
 
-        # initialise the result list with selected information from each report
-        result = []
-        for report in reports:
-            result.append({
-                "report_id": report.report_id,
-                "contract_name": report.contract_name,
-                # convert the date object to a string with format dd-mm-yyyy
-                "submission_date": report.submission_date.strftime('%d-%m-%Y'), 
-                # convert the time object to a string with format HH:MM AM/PM
-                "submission_time": report.submission_time.strftime('%I:%M %p'),
-                "number_of_vulnerabilities": report.number_of_vulnerabilities  
-            })
+    # initialise the result list with selected information from each report
+    result = []
+    for report in reports:
+        result.append({
+            "report_id": report.report_id,
+            "contract_name": report.contract_name,
+            # convert the date object to a string with format dd-mm-yyyy
+            "submission_date": report.submission_date.strftime('%d-%m-%Y'), 
+            # convert the time object to a string with format HH:MM AM/PM
+            "submission_time": report.submission_time.strftime('%I:%M %p'),
+            "number_of_vulnerabilities": report.number_of_vulnerabilities  
+        })
 
-        # return the result list containing all the reports
-        return result
-    except Exception as e:
-        # raise an HTTPException with a 500 status code and error details
-        raise HTTPException(status_code=500, detail=f"Internal server error. Please try again.")
-    finally:
-        # ensure that the database session is closed no matter what
-        db.close()
+    # return the result list containing all the reports
+    return result
 
-# function to retrieve a specific report from a database along with its associated vulnerabilities.
 
+# Function to retrieve a specific report from a database along with its associated vulnerabilities and results details.
+@db_handler
 def get_report(db: Session, report_id: int):
-    try:
-        # query the database to get a specific report with associated vulnerabilities
-        # this is equivalent to joining Report and Result tables using the report_id FK query
-        report = (
-            db.query(Report)
-            .filter(Report.report_id == report_id)
-            .options(joinedload(Report.vulnerabilities).joinedload(Result.vulnerability))
-            .first()
-        )
+    # query the database to get a specific report with associated vulnerabilities
+    # this is done by joining the Report and Vulnerability tables on the report_id
+    report = (
+        db.query(Report)
+        .filter(Report.report_id == report_id)
+        .options(joinedload(Report.vulnerabilities).joinedload(Result.vulnerability))
+        .first()
+    )
 
-        # check if the report exists
-        if report is None:
-            raise HTTPException(status_code=404, detail="Report not found")
+    # check if the report exists
+    if report is None:
+        raise HTTPException(status_code=404, detail="Report not found")
 
-        # extract details from the report and its associated vulnerabilities
-        vulnerabilities_details = []
-        for result in report.vulnerabilities:
-            vuln = result.vulnerability
+    # prepare the report data to be returned
+    report_info = {
+        "report_id": report.report_id,
+        "contract_name": report.contract_name,
+        "submission_date": report.submission_date,
+        "submission_time": report.submission_time,
+        "number_of_vulnerabilities": report.number_of_vulnerabilities,
+        "vulnerabilities_details": {}
+    }
 
-            vulnerabilities_details.append({
+    # iterate through each vulnerability in the report (this relationship attribute is defined in models.py)
+    for result in report.vulnerabilities:
+        vuln = result.vulnerability # get the vulnerability attribute of result model
+
+        # check if vulnerability is already in the report_info["vulnerabilities_details"] 
+        # this is to prevent duplication of vulnerability as we are iterating through the result model, not vulnerability model
+        if vuln.vulnerability_id not in report_info["vulnerabilities_details"]:
+            report_info["vulnerabilities_details"][vuln.vulnerability_id] = {
                 "vulnerability_type": vuln.vulnerability_type,
                 "impact": vuln.impact,
                 "confidence": vuln.confidence,
                 "description": vuln.description,
                 "recommendation": vuln.recommendation,
-                "results": [
-                    {
-                        "description": result.description,
-                        "location": result.location
-                    }
-                ]
-            })
+                "results": [] # initialise the results list of each vuln
+            }
 
-        # prepare the result with selected information
-        result = {
-            "contract_name": report.contract_name,
-            "submission_date": report.submission_date.strftime('%d-%m-%Y'),
-            "submission_time": report.submission_time.strftime('%I:%M %p'),
-            "number_of_vulnerabilities": report.number_of_vulnerabilities,
-            "vulnerabilities_details": vulnerabilities_details
-        }
+        # add each result to the corresponding vulnerability
+        report_info["vulnerabilities_details"][vuln.vulnerability_id]["results"].append({
+            "description": result.description,
+            "location": result.location
+        })
 
-        # return the result
-        return result
-    except HTTPException as e:
-        # raise HTTPException if exists
-        raise e
-    except Exception as e:
-        # raise an HTTPException with a 500 status code and error details if there are other errors
-        raise HTTPException(status_code=500, detail=f"Internal server error. Please try again.")
-    finally:
-        # ensure that the database session is closed no matter what
-        db.close()
-  
-  
-# function to delete a speicific report from the database by its report_id
+    # convert the vulnerabilities_details dictionary to a list
+    report_info["vulnerabilities_details"] = list(report_info["vulnerabilities_details"].values())
+
+    return report_info
+
+
+# function to delete a specific report from the database by its report_id
+@db_handler
 def delete_report(db: Session, report_id: int):
-    try:
-        # check if the report exists
-        report = db.query(Report).filter(Report.report_id == report_id).first()
+    # check if the report exists
+    report = db.query(Report).filter(Report.report_id == report_id).first()
 
-        # if the report is not found, raise a 404 error
-        if report is None:
-            raise HTTPException(status_code=404, detail="Report not found")
+    # if the report is not found, raise a 404 error
+    if report is None:
+        raise HTTPException(status_code=404, detail="Report not found")
 
-        # delete associated vulnerabilities first
-        db.query(Result).filter(Result.report_id == report_id).delete()
+    # delete associated vulnerabilities first
+    db.query(Result).filter(Result.report_id == report_id).delete()
 
-        # then delete the report itself
-        db.query(Report).filter(Report.report_id == report_id).delete()
-        db.commit() # commit the changes
-        
-        # return a success message
-        return {"message": "Report deleted successfully"}
-    except HTTPException as e:
-        # raise HTTPException if exists
-        raise e
-    except Exception as e: # other errors handle
-        # if an error occurs, rollback the changes and raise an HTTPException
-        db.rollback()
-        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
-    finally:
-        # ensure that the database session is closed no matter what
-        db.close()
+    # then delete the report itself
+    db.query(Report).filter(Report.report_id == report_id).delete()
+    db.commit() # commit the changes
+    
+    # return a success message
+    return {"message": "Report deleted successfully"}
+

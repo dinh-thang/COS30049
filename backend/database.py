@@ -9,11 +9,10 @@ from sqlalchemy.exc import OperationalError
 
 
 # replace 'user', 'password', 'localhost' with your own MySQL connection details
-# ! DB has been auto create if not exists
 MYSQL_USER = "root"
 MYSQL_PASSWORD = "root"
 MYSQL_HOST = "localhost"
-MYSQL_DB = "testresult"
+MYSQL_DB = "smartcontractauditdb"
 MYSQL_DB_URL = f"mysql+mysqlconnector://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_HOST}/{MYSQL_DB}"
 
 engine = create_engine(
