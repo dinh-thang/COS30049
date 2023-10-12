@@ -66,10 +66,10 @@ async def create_report(contract: UploadFile, db: Session = Depends(get_db)):
         }
         
         # upload the filtered report to the database
-        crud.upload_report(db, report_data)
+        report_id = crud.upload_report(db, report_data)
         
-        # returns a success message if the upload and analysis are completed successfully.
-        return {"message": "Audit has been uploaded successfully."}
+        # returns a success message if the upload and analysis are completed successfully and report_id to redirect after success
+        return {"message": "Audit has been uploaded successfully.", "report_id": report_id}
     except HTTPException as e:
         # raise HTTPException with specific error details e.g., invalid file type
         raise e
@@ -78,7 +78,7 @@ async def create_report(contract: UploadFile, db: Session = Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal server error. Please try again.")
 
 @app.get("/reports/", status_code=status.HTTP_200_OK)
-async def get_reports(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
+async def get_reports(skip: int = 0, limit: int = 15, db: Session = Depends(get_db)):
     """Get all reports endpoint, accepts optional parameters skip and limit to control pagination."""
     return crud.get_all_reports(db, skip, limit)
 

@@ -80,7 +80,7 @@ const ReportHistory = () => {
       setReports(updatedReports);   
       
     } catch(error) {
-      console.error("An error occured:", error)
+      console.error("An error occurred:", error)
     }
   };
 

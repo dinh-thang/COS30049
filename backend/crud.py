@@ -61,7 +61,7 @@ def upload_report(db: Session, report_data: dict):
             create_result(db, result_data, report.report_id, vuln_id)
     
     # return the report
-    return report
+    return report.report_id
 
 
 # Function to create a new report and save it to the database Report table
@@ -106,7 +106,7 @@ def create_result(db: Session, result_data: dict, report_id: int, vulnerability_
 
 # function to retrieves a list of reports from the database with pagination.
 @db_handler
-def get_all_reports(db: Session, skip: int = 0, limit: int = 10):
+def get_all_reports(db: Session, skip: int, limit: int):
     # query the database to get a list of reports with pagination
     reports = db.query(Report).offset(skip).limit(limit).all()
 
@@ -153,8 +153,8 @@ def get_report(db: Session, report_id: int):
     report_info = {
         "report_id": report.report_id,
         "contract_name": report.contract_name,
-        "submission_date": report.submission_date,
-        "submission_time": report.submission_time,
+        "submission_date": report.submission_date.strftime('%d-%m-%Y'),
+        "submission_time": report.submission_time.strftime('%I:%M %p'),
         "number_of_vulnerabilities": report.number_of_vulnerabilities,
         "vulnerabilities_details": {} # initialise vuln_details as dict instead of list to use vuln_id key
     }

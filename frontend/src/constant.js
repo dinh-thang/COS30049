@@ -9,3 +9,8 @@ export const navLinks = [
   { name: "Report History", path: "/report" },
   { name: "About Us", path: "/about" },
 ];
+
+export const UPLOAD_CONTRACT_API = "/upload_contract/";
+export const GET_REPORTS_API = "/reports/";
+export const GET_REPORT_API = "/reports/:id";
+export const DELETE_REPORT_API = "/reports/:id";
