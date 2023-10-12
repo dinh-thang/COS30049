@@ -12,6 +12,21 @@ NAMING CONVENTION
 
 Base = declarative_base() # SQLalchemy base class
 
+# ReportVulnerability table
+class Result(Base):
+    __tablename__ = 'results'
+
+    result_id = Column(Integer, primary_key=True, autoincrement=True)
+    report_id = Column(Integer, ForeignKey('reports.report_id'))
+    vulnerability_id = Column(Integer, ForeignKey('vulnerabilities.vulnerability_id'))
+
+    description = Column(Text)
+    location = Column(Text)
+
+    # one-to-many relationships with Reports and Vulnerabilities tables as this is junction table
+    # report = relationship('Report', back_populates='vulnerabilities')
+    # vulnerability = relationship('Vulnerability', back_populates='reports')
+
 # Vulnerabilities table
 class Vulnerability(Base):
     __tablename__ = 'vulnerabilities'
