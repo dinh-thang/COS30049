@@ -24,7 +24,7 @@ const DropDown = ({
   // display the drop down menu if it is open
   return (
     <div
-      className="absolute mt-2 w-56 top-[42px] right-0 md:left-0
+      className="absolute mt-2 w-64 top-[42px] right-0 md:left-0
       rounded-lg shadow-xl bg-white ring-1 ring-black ring-opacity-40"
     >
       {/* menu */}

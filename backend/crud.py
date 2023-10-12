@@ -156,7 +156,7 @@ def get_report(db: Session, report_id: int):
         "submission_date": report.submission_date,
         "submission_time": report.submission_time,
         "number_of_vulnerabilities": report.number_of_vulnerabilities,
-        "vulnerabilities_details": {}
+        "vulnerabilities_details": {} # initialise vuln_details as dict instead of list to use vuln_id key
     }
 
     # iterate through each vulnerability in the report (this relationship attribute is defined in models.py)
@@ -181,7 +181,7 @@ def get_report(db: Session, report_id: int):
             "location": result.location
         })
 
-    # convert the vulnerabilities_details dictionary to a list
+    # convert the vulnerabilities_details dictionary to a list of vulnerabilities details
     report_info["vulnerabilities_details"] = list(report_info["vulnerabilities_details"].values())
 
     return report_info
