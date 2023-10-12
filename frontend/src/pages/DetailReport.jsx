@@ -1,97 +1,215 @@
-import { TITLE1_CSS_CONFIGURATION } from "../constant"; // import CSS config constants
-import { useParams, Link } from "react-router-dom"; // import necessary hook for URL parameter extraction
-import { useEffect, useState } from "react";
-import ReactMarkdown from "react-markdown"
-import api from "../api";
+import React, { useEffect, useState } from "react";
+import { useParams, Link } from "react-router-dom";
+import ReactMarkdown from "react-markdown"; // library for rendering markdown content
+import breaks from "remark-breaks"; // remark plugin for handling line breaks
+import api from "../api"; // Axios instance for making API requests
+import { TITLE1_CSS_CONFIGURATION } from "../constant"; // CSS configuration for title styling
+import { BeatLoader } from "react-spinners"; // Loading spinner component from react-spinners library
 
-
-// This is the designated page for a single contract report
-// sample data is used here since the data retrieval method may varies when implementing back end
 const DetailReport = () => {
-  // the id of the report from URL parameters
-  let { id } = useParams();
-  const [report, setReports] = useState([])
-  const getReport = async() => {
-    const fetchedReport = await api.get("/reports/" + id)
-    setReports(fetchedReport.data)
-  }
+  const { id } = useParams(); // extract 'id' from the route parameters
+  const [report, setReport] = useState([]); // state to store the report data
+  const [loading, setLoading] = useState(true); // state for loading spinner
+  const [noVulnerabilities, setNoVulnerabilities] = useState(false); // state to track if there are no vulnerabilities
+  const [error, setError] = useState(null); // state to handle server connection error msg
 
+  // fetch report data
   useEffect(() => {
-    getReport()
-  }, [])
+    // async function to fetch report data from the api
+    const getReport = async () => {
+      try {
+        // make a GET request to API endpoint for each specific report
+        const { data } = await api.get(`/reports/${id}`);
+        setReport(data); // update the report state with the fetched data
+        setLoading(false); // make loading spinner disappear after has done fetching
+        // set state based on the presence of vulnerabilities in the report, if true then display no vulnerabilities found msg
+        setNoVulnerabilities(data.number_of_vulnerabilities === 0);
+      } catch (error) {
+        // handle errors if exists
+        setLoading(false); // make loading spinner disappear if error occurs
+        // set the error message
+        setError(
+          error.isServerConnectionError
+            ? "Server connection error"
+            : "Error fetching report"
+        );
+      }
+    };
 
-  // const report = reportData[parseInt(id)]; // extract the report from the JSON file based on the id
+    getReport(); // invoke the function to fetch the report data
 
-  return (
-    <div>
-      {/* page title, convert id to integer and plus 1 because index start from 0 */}
-      <h1 className={TITLE1_CSS_CONFIGURATION}>
-        Detail Report {id}
-      </h1>
-      
-      {/* display report details */}
-      <section>
-        <h2 className="text-xl font-bold mb-2 text-blue-600">Report Details</h2>
-        <ul className="list-disc pl-6 mb-6">
-          <li>
-            <span className="font-bold">Contract Name: </span>
-            {report.contract_name}
-          </li>
-          <li>
-            <span className="font-bold">Submission Date: </span>
-            {report.submission_date}
-          </li>
-          <li>
-            <span className="font-bold">Submission Time: </span>
-            {report.submission_time}
-          </li>
-          <li>
-            <span className="font-bold">Number of vulnerabilities: </span> {report.number_of_vulnerabilities}
-          </li>
-        </ul>
-      </section>
+    // dependency array includes id to ensure useEffect runs when id changes
+  }, [id]);
 
+  // render report details
+  const renderReportDetails = () => (
+    <section>
+      <h2 className="text-xl font-bold mb-2 text-blue-600">Report Details</h2>
+      <ul className="list-disc pl-6 mb-6">
+        <li>
+          <span className="font-bold">Contract Name: </span>
+          {report.contract_name}
+        </li>
+        <li>
+          <span className="font-bold">Submission Date: </span>
+          {report.submission_date}
+        </li>
+        <li>
+          <span className="font-bold">Submission Time: </span>
+          {report.submission_time}
+        </li>
+        <li>
+          <span className="font-bold">Number of vulnerabilities: </span>
+          {report.number_of_vulnerabilities}
+        </li>
+      </ul>
+    </section>
+  );
+
+  // render details of detected vulnerabilities
+  const renderVulnerabilityDetails = () => (
+    <section>
       <h2 className="text-xl font-bold mb-1 text-blue-600">
         Detected Vulnerability Details
       </h2>
-      {/* mapping through each vulnerability in the report */}
-      {report.length !== 0 ? ( 
-        report.vulnerabilities_details.map((v, index) => (
-          <section
-            key={index}
-            className="p-4 mb-4 border-b-2 last-of-type:border-none"
-          >
-            {/* vulnerability number, plus 1 because index start from 0 */}
-            <h3 className="text-lg font-bold mb-2">Vulnerability {index + 1}</h3>
-            <ul className="list-disc pl-6 mb-2">
-              {/* display vulnerability details */}
-              <li>
-                <span className="font-bold">Vulnerability type: </span><ReactMarkdown children={v.vulnerability_type}/>
-              </li>
-              <li>
-                <span className="font-bold">Vulnerability impact: </span><ReactMarkdown children={v.impact}/>
-              </li>
-              <li>
-                <span className="font-bold">Vulnerability confidenct: </span><ReactMarkdown children={v.confidence}/>
-              </li>
-              <li>
-                <span className="font-bold">Description: </span><ReactMarkdown children={v.description}/>
-              </li>
-              <li>
-                <span className="font-bold">Recommendation: </span><ReactMarkdown children={v.recommendation}/>
-              </li>
-            </ul>
-          </section>
-        ))) : (
-          <div></div>
+      {/* display a msg if there are no vulnerabilities found */}
+      {noVulnerabilities && <p>No vulnerabilities found.</p>}
+      {/* display loading spinner or vulnerability details based on loading state */}
+      {loading ? ( // Display spinner when loading
+        <div className="text-center">
+          {/* display spinner when loading */}
+          <BeatLoader color="#1d4ed8" loading={true} />
+        </div>
+      ) : (
+        // Display vulnerability details if loading is complete and vulnerabilities are present
+        report.length !== 0 &&
+        // map over the vulnerabilities and render each one
+        report.vulnerabilities_details.map(renderVulnerability) 
       )}
-      <Link
-        to="/report"
-            className="px-4 py-3 rounded text-white bg-blue-600 bg-opacity-100 hover:bg-opacity-80 sm:px-8"
-      >
-        Go Back
-      </Link>
+    </section>
+  );
+
+  // render each vulnerability and its details
+  const renderVulnerability = (v, index) => (
+    <section
+      key={index}
+      className="p-4 mb-4 border-b-2 last-of-type:border-none"
+    >
+      <h3 className="text-lg font-bold mb-2">
+        Vulnerability {index + 1} ({v.results.length} results)
+      </h3>
+      {/* display a list of details for the vulnerability */}
+      <ul className="list-disc pl-6 mb-2">
+        {/* display each vulnerability detail as a list item */}
+        <li>
+          <span className="font-bold">Vulnerability type: </span>
+          {/* use react-markdown to convert markdown format stored in the db to html element */}
+          <ReactMarkdown
+            components={{ a: MarkdownLink }}
+            children={v.vulnerability_type}
+          />
+        </li>
+        <li>
+          <span className="font-bold">Impact level: </span>
+          <ReactMarkdown components={{ a: MarkdownLink }} children={v.impact} />
+        </li>
+        <li>
+          <span className="font-bold">Confidence level: </span>
+          <ReactMarkdown
+            components={{ a: MarkdownLink }}
+            children={v.confidence}
+          />
+        </li>
+        <li>
+          <span className="font-bold">Description: </span>
+          <ReactMarkdown
+            components={{ a: MarkdownLink }}
+            children={v.description}
+          />
+        </li>
+        <li>
+          <span className="font-bold">Recommendation: </span>
+          <ReactMarkdown
+            components={{ a: MarkdownLink }}
+            children={v.recommendation}
+          />
+        </li>
+        <li>
+          <span className="font-bold">Results:</span>
+          <ul className="list-none pl-6">{v.results.map(renderResult)}</ul>
+        </li>
+      </ul>
+    </section>
+  );
+
+  // render each result and its details
+  const renderResult = (result, resultIndex) => (
+    <li key={resultIndex}>
+      <div>
+        <span className="font-bold text-blue-500">
+          Result {resultIndex + 1}:
+        </span>
+        <ul className="list-disc pl-6">
+          <li>
+            <span className="font-bold">Description: </span>
+            <ReactMarkdown
+              components={{ a: DisabledLink }}
+              remarkPlugins={[breaks]}
+              children={result.description}
+            />
+          </li>
+          <li>
+            <span className="font-bold">Location: </span>
+            {result.location}
+          </li>
+        </ul>
+      </div>
+    </li>
+  );
+
+  // disabled link to be used in the result description as these links should be not clickable and has styling
+  const DisabledLink = ({ children }) => (
+    <span className="font-bold underline underline-offset-2 decoration-blue-500">
+      {children}
+    </span>
+  );
+
+  // markdown link that has styling to be used in vulnerability description or recommendation so the link is easier to differentiate
+  const MarkdownLink = ({ href, children }) => (
+    <a
+      href={href} // set the 'href' attribute to the value provided in the 'href' prop
+      className="text-blue-600"
+      target="_blank" // to open link in a new tab
+      rel="noopener noreferrer" // for security reasons when opening in a new tab
+    >
+      {/* the content of the link is specified by the children prop. */}
+      {children}
+    </a>
+  );
+
+  return (
+    <div>
+      <div className="flex flex-col items-center justify-center">
+        {/* display the title with custom margin */}
+        <h1 className={`${TITLE1_CSS_CONFIGURATION} mb-3`}>
+          Detail Report {id}
+        </h1>
+        {/*  a link to return to report history page with custom styling */}
+        <Link
+          to="/reports"
+          className="mb-4 mt-4 px-5 py-2 rounded-full flex items-center text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-200"
+        >
+          Report History
+        </Link>
+      </div>
+      {/* display server connection error message or other error msg if exists */}
+      {error && <div className="text-red-600 text-center mt-4">{error}</div>}
+      {/* render Report Details section */}
+      {renderReportDetails()}
+      {/* render Vulnerability Details section */}
+      {renderVulnerabilityDetails()}
     </div>
   );
 };
+
 export default DetailReport;

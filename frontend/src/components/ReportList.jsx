@@ -45,7 +45,7 @@ const ReportList = ({ reports, onDelete }) => {
                     {/* Link to detailed report page */}
                     <Link
                       className="text-blue-500 hover:underline"
-                      to={"/report/" + (record.report_id)}
+                      to={"/reports/" + (record.report_id)}
                     >
                       Details
                     </Link>
@@ -94,7 +94,7 @@ const ReportList = ({ reports, onDelete }) => {
                   {/* Link to detailed report page */}
                   <Link
                     className="text-blue-500"
-                    to={"/report/" + (record.report_id - 1)}
+                    to={"/reports/" + (record.report_id - 1)}
                   >
                     Details
                   </Link>

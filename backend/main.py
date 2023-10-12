@@ -38,7 +38,7 @@ async def create_report(contract: UploadFile, db: Session = Depends(get_db)):
 
         # validate if the uploaded file is a .sol file
         if not contract.filename.endswith(".sol"):
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid file extension. Only .sol files are allowed for auditing.")
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid file extension. Please upload only .sol files for auditing.")
         
         # get current date and time of submission
         submission_date = services.get_current_date()

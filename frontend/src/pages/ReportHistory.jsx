@@ -11,7 +11,6 @@ const ReportHistory = () => {
   const [query, setQuery] = useState(""); // to manage search query, by default, the query is empty
   const [sortBy, setSortBy] = useState("submission_date"); // to manage sort field, by default, sort by submission date field
   const [orderBy, setOrderBy] = useState("asc"); // to manage sort order, by default, the report list is displayed in ascending order
-  const [delStatus, setDelStatus] = useState("")
 
   // trigger after the component is mounted
   useEffect(() => {
@@ -48,14 +47,13 @@ const ReportHistory = () => {
       const reportData = await api.get("/reports/")
       setReports(reportData.data)
     } catch (error) {
-      console.error("An error occured:", error)
+      console.error("An error occurred:", error)
     }
   }
 
   // delete a report from the database
   const deleteAReport = async(id) => {
-    const status = await api.delete("/reports/" + id)
-    setDelStatus(status.data)
+    await api.delete("/reports/" + id)
   }
 
   // filter and sort the reports based on search and sort criteria
@@ -88,7 +86,6 @@ const ReportHistory = () => {
     <div>
       {/* Title using global styles */}
       <h1 className={TITLE1_CSS_CONFIGURATION}>Report History</h1>
-      {/* User profile component */}
       {/* Search component */}
       <Search
         query={query}

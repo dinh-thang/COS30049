@@ -1,50 +1,71 @@
 import React, { useState } from "react";
-import { BeatLoader } from "react-spinners";
+import { BeatLoader } from "react-spinners"; // for spinner component while file is being uploaded
 import api from "../api";
 import { useNavigate } from "react-router-dom";
-import { UPLOAD_CONTRACT_API } from "../constant";
 
 // File uploader component allows the user to upload smart contract files
 const Uploader = () => {
-  const [selectedFile, selectFile] = useState(null);  // store the selected file using useState
+  const [selectedFile, selectFile] = useState(null); // store the selected file using useState
   const [error, setError] = useState(null); // for error msg if exists
   const [isLoading, setIsLoading] = useState(false); // for keeping track of the loading state
 
-  // store the navigate function from useNavigate hook of react router dom, this is for redirection
+  // get the navigate function from react-router-dom
   const navigate = useNavigate();
 
   // function to handle tasks when file is uploaded
   const handleFileUpload = async (e) => {
     e.preventDefault();
 
+    // reset the error state, so that the error msg disappears when user click upload button again
+    setError(null);
+
+    // check if the user has uploaded a file
     if (!selectedFile) {
       setError("Please select a file before uploading.");
-      return;
+      return; // skip the rest of the function if no file is selected
     }
 
-    const formData = new FormData();
-    formData.append("contract", selectedFile);
+    // client side validation to check if the file has a valid extension
+    // note: server side fastapi also has this validation for integrity check
+    const allowedExtensions = ["sol"];
+    // get the file extension from the selected file by splitting it into an array and get the last element
+    const fileExtension = selectedFile.name.split(".").pop().toLowerCase();
+    // check if the file has a valid extension
+    if (!allowedExtensions.includes(fileExtension)) {
+      setError(
+        "Invalid file extension. Please upload only .sol files for auditing."
+      );
+      return; // skip the rest of the function if the file has an invalid extension
+    }
+
+    const formData = new FormData(); // create a new FormData object
+    formData.append("contract", selectedFile); // append the selected file to the FormData object
 
     try {
-      setIsLoading(true); // Set loading to true when starting the upload
-
-      const response = await api.post(UPLOAD_CONTRACT_API, formData);
+      setIsLoading(true); // set loading to true when starting the upload
+      
+      // make a POST request to the API endpoint
+      const response = await api.post('/upload_contract', formData); 
 
       if (response.status === 201) {
-        // On successful upload (status code 201), navigate to the detailed report page
-        navigate(`/report/${response.data.report_id}`);
+        // on successful upload (status code 201), navigate to the detailed report page
+        navigate(`/reports/${response.data.report_id}`);
       } else if (response.status === 422) {
+        // if has unprocessable entity status code, set the error message 
         setError("Invalid input data encoding format. Please try again.");
       }
-    } catch (e) {
-        // On error, set the error message
-      setError(
-        // the ? for optional chaining, this is to avoid errors if the response data of the fastapi backend does not exist
-        e.response?.data?.detail ||
-          "An error occurred while processing the file. Please try again."
-      );
+    } catch (e) { // catch any other errors
+      if (e.isServerConnectionError) { // server connection error that has been set globally in api.js file
+        setError(e.message);
+      } else {
+        // other error msg from the fastapi server or fallback msg 
+        setError(
+          e.response?.data?.detail ||
+            "An error occurred while processing the file"
+        );
+      }
     } finally {
-      setIsLoading(false); // Set loading to false when the upload is complete
+      setIsLoading(false); // et loading to false when the upload is complete
     }
   };
 
@@ -56,19 +77,20 @@ const Uploader = () => {
 
     // set the file state to the first selected file in the e.target.files obj
     selectFile(file);
-    // Reset the error when a new file is selected
+    // reset the error msg when a new file is selected
     setError(null);
   };
 
-  // function to handle drag over event
+  // function to handle drag over event for drag and drop file
   const handleDragOver = (e) => {
-    e.preventDefault();
+    e.preventDefault(); // prevent default behavior of the event
   };
 
-  // function to handle drop event
+  // function to handle drop event for drag and drop file
   const handleDrop = (e) => {
-    e.preventDefault();
+    e.preventDefault(); // prevent default behavior of the event
 
+    // get the dropped file from the event
     const file = e.dataTransfer.files[0];
 
     // set the file state to the dropped file
@@ -95,7 +117,6 @@ const Uploader = () => {
           {selectedFile !== null ? (
             <div>
               <p id="status-notification-file">{selectedFile.name}</p>
-              {/* insert a file icon for beautifulness */}
             </div>
           ) : (
             <div>
@@ -122,7 +143,7 @@ const Uploader = () => {
       </div>
 
       <div className="flex flex-col justify-center items-center">
-        {/* Conditionally render the spinner or upload button based on the loading state */}
+        {/* conditionally render the spinner or upload button based on the loading state */}
         {isLoading ? (
           <div className="flex flex-col justify-center items-center">
             <BeatLoader color="#1d4ed8" loading={isLoading} />
@@ -137,7 +158,7 @@ const Uploader = () => {
             Upload
           </button>
         )}
-        {/* display error msg */}
+        {/* display error msg if exists */}
         {error && (
           <div className="text-red-500 mt-2 flex justify-center items-center">
             {error}
