@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 // this component displays a list of audit reports
 const ReportList = ({ reports, onDelete }) => {
   // THIS IS THE PLACE HOLDER VERSION OF THE REPORT LIST ONLY.
+  
   const tableCategories = [
     "Report ID",
     "Contract Name",

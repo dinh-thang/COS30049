@@ -12,6 +12,7 @@ const ReportHistory = () => {
   const [query, setQuery] = useState(""); // to manage search query, by default, the query is empty
   const [sortBy, setSortBy] = useState("submission_date"); // to manage sort field, by default, sort by submission date field
   const [orderBy, setOrderBy] = useState("asc"); // to manage sort order, by default, the report list is displayed in ascending order
+  const [delStatus, setDelStatus] = useState("")
 
   // trigger after the component is mounted
   useEffect(() => {
@@ -44,8 +45,18 @@ const ReportHistory = () => {
 
   // get all the report each time the page is rendered
   async function getAllReportData() {
-    const reportData = await api.get("/reports/")
-    setReports(reportData.data)
+    try {
+      const reportData = await api.get("/reports/")
+      setReports(reportData.data)
+    } catch (error) {
+      console.error("An error occured:", error)
+    }
+  }
+
+  // delete a report from the database
+  const deleteAReport = async(id) => {
+    const status = await api.delete("/reports/" + id)
+    setDelStatus(status.data)
   }
 
   // filter and sort the reports based on search and sort criteria
@@ -57,12 +68,21 @@ const ReportHistory = () => {
     }
   }
   // function to handle report deletion
-  const handleDelete = (reportId) => {
-    // delete the report with the given ID by filtering out the deleted report
-    const updatedReports = reports.filter(
-      (report) => report.reportId !== reportId
-    );
-    setReports(updatedReports); // update the reports state to the filtered report
+  const handleDelete = async(report_id) => {
+    try {
+      // delete report from the database
+      deleteAReport(report_id)
+
+      // filtering out the deleted report
+      const updatedReports = reports.filter(
+        (report) => report.report_id !== report_id
+      );
+      // update the reports state to the filtered report
+      setReports(updatedReports);   
+      
+    } catch(error) {
+      console.error("An error occured:", error)
+    }
   };
 
   return (
