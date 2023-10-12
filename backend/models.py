@@ -57,6 +57,8 @@ class Report(Base):
 # Result table
 class Result(Base):
     __tablename__ = 'results'
+    __table_args__ = {'keep_existing': True}
+
 
     result_id = Column(Integer, primary_key=True, autoincrement=True)
     description = Column(Text)

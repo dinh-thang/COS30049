@@ -36,8 +36,6 @@ const ReportHistory = () => {
   function sortReports(a, b) {
     let sortingOrder = orderBy === "asc" ? 1 : -1; // determine sorting order based on orderBy value
 
-    // console.log(a["submission_date"])
-
     // Default sorting by other fields if the user does not select sort by "number of vuls"
     return a[sortBy].toString().toLowerCase() < b[sortBy].toString().toLowerCase()
       ? -1 * sortingOrder // Sort in ascending order
@@ -47,14 +45,17 @@ const ReportHistory = () => {
   // get all the report each time the page is rendered
   async function getAllReportData() {
     const reportData = await api.get("/reports/")
-
     setReports(reportData.data)
-    // console.log(reportData.data)
   }
 
   // filter and sort the reports based on search and sort criteria
-  const filteredReports = reports.filter(matchesQuery).sort(sortReports);
-
+  const filteredReports = () => {
+    if (Array.isArray(reports)) {
+      return reports.filter(matchesQuery).sort(sortReports); 
+    } else {
+      return []
+    }
+  }
   // function to handle report deletion
   const handleDelete = (reportId) => {
     // delete the report with the given ID by filtering out the deleted report
@@ -79,7 +80,7 @@ const ReportHistory = () => {
         onOrderByChange={(newOrderBy) => setOrderBy(newOrderBy)} // handle sort order changes
       />
       {/* display list of reports */}
-      <ReportList reports={filteredReports} onDelete={handleDelete} />
+      <ReportList reports={filteredReports()} onDelete={handleDelete} />
     </div>
   );
 };

@@ -18,7 +18,7 @@ const DetailReport = () => {
 
   useEffect(() => {
     getReport()
-  })
+  }, [])
 
   // const report = reportData[parseInt(id)]; // extract the report from the JSON file based on the id
 

@@ -15,20 +15,19 @@ const Uploader = () => {
     formData.append("contract", selectedFile)
 
     try {
-      const status = await api.post(
+      await api.post(
         "/upload_contract/",
         formData
       )
       .then(response => {
-        if (response.status == 422) {
+        if (response.status === 422) {
           return "Invalid input data encoding format"
         } else {
           // set new status
           setUploadStatus(response.data)
 
           // update the placeholder text
-          const element = document.getElementById("status-notification").
-          element.textContent({uploadStatus})
+          document.getElementById("status-notification").textContent = uploadStatus.message.toString()
         }
       })
       
@@ -55,9 +54,10 @@ const Uploader = () => {
           htmlFor="upload-file"
           className="w-full lg:w-1/2 relative min-h-[200px] items-center justify-center rounded-md border-2 border-[#e0e0e0] p-12 text-center hover:bg-gray-100 hover:border-dashed"
         >
+          <p id="status-notification"></p>
           {selectedFile !== null ? (
             <div>
-              <p id="status-notification">{selectedFile.name}</p>
+              <p id="status-notification-file">{selectedFile.name}</p>
               {/* insert a file icon for beautifulness */}
             </div>
           ) : (
