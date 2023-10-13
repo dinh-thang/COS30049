@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import {BiUpArrowAlt} from 'react-icons/bi'
 import { useParams, Link } from "react-router-dom";
 import ReactMarkdown from "react-markdown"; // library for rendering markdown content
 import breaks from "remark-breaks"; // remark plugin for handling line breaks
@@ -46,6 +47,10 @@ const DetailReport = () => {
     // dependency array includes id to ensure useEffect runs when id changes
   }, [id]);
 
+  const handleScrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   // render report details
   const renderReportDetails = () => (
     <section>
@@ -79,19 +84,12 @@ const DetailReport = () => {
       </h2>
       {/* display a msg if there are no vulnerabilities found */}
       {noVulnerabilities && <p>No vulnerabilities found.</p>}
-      {/* display loading spinner or vulnerability details based on loading state */}
-      {isLoading ? ( // Display spinner when loading
-        <div className="text-center">
-          {/* display spinner when loading */}
-          <BeatLoader color="#1d4ed8" loading={true} />
-          <p>Loading...</p>
-        </div>
-      ) : (
-        // Display vulnerability details if loading is complete and vulnerabilities are present
+      {
+        // display vulnerability details if the vulnerabilities are present
         report.length !== 0 &&
-        // map over the vulnerabilities and render each one
-        report.vulnerabilities_details.map(renderVulnerability)
-      )}
+          // map over the vulnerabilities and render each one
+          report.vulnerabilities_details.map(renderVulnerability)
+      }
     </section>
   );
 
@@ -102,7 +100,9 @@ const DetailReport = () => {
       className="p-4 mb-4 border-b-2 last-of-type:border-none"
     >
       <h3 className="text-lg font-bold mb-2">
-        Vulnerability {index + 1} ({v.results.length} results)
+        {/* display the vulnerability number and its result count */}
+        Vulnerability {index + 1} ({v.results.length}
+        {v.results.length === 1 ? " result" : " results"})
       </h3>
       {/* display a list of details for the vulnerability */}
       <ul className="list-disc pl-6 mb-2">
@@ -208,6 +208,15 @@ const DetailReport = () => {
           Report History
         </Link>
       </div>
+
+      {/* scroll to top button */}
+      <button
+        onClick={handleScrollToTop}
+        // make the button fixed at the bottom right corner of the page
+        className="fixed bottom-4 right-4 bg-blue-400 text-white px-2 py-2 rounded-full hover:bg-blue-500 transition-colors duration-200"
+      >
+        <BiUpArrowAlt className="text-3xl"/>
+      </button>
 
       {/* display server connection error message or other error msg if exists */}
       {error && (

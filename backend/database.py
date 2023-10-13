@@ -4,14 +4,13 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models import Base
 from sqlalchemy_utils import database_exists, create_database
-
 from sqlalchemy.exc import OperationalError
 
 
-# replace 'user', 'password', 'localhost' with your own MySQL connection details
-MYSQL_USER = "root"
-MYSQL_PASSWORD = "root"
-MYSQL_HOST = "localhost"
+# README: replace 'user', 'password', 'localhost' with your own MySQL connection details
+MYSQL_USER = "root" # change this
+MYSQL_PASSWORD = "root" # change this
+MYSQL_HOST = "localhost" # change this
 MYSQL_DB = "smartcontractauditdb"
 MYSQL_DB_URL = f"mysql+mysqlconnector://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_HOST}/{MYSQL_DB}"
 
