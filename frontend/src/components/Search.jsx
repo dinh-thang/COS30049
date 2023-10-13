@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 // import icons from react-icons library
 import { BsSearch } from "react-icons/bs";
 import { HiSortAscending } from "react-icons/hi";
@@ -45,7 +45,8 @@ const DropDown = ({
           onClick={() => handleSortByChange("number_of_vulnerabilities")}
         >
           {/* conditionally render the checkmark if the sorting option is chosen, indicating selected state of the menu option   */}
-          Number of vulnerabilities {selectedSortBy === "number_of_vulnerabilities" && <BiCheck />}
+          Number of vulnerabilities{" "}
+          {selectedSortBy === "number_of_vulnerabilities" && <BiCheck />}
         </li>
         {/* Menu item for sorting by submission date */}
         <li
@@ -85,22 +86,45 @@ const Search = ({
   orderBy, // represent the current selected ordering preference
   onOrderByChange, // unction to handle changes in the ordering preference
 }) => {
-  // keep track of the drop down menu state and control its visibility 
-  const [isOpen, setOpen] = useState(false); // by default, the drop down menu is hidden
+  // keep track of the drop down menu state and control its visibility
+  // by default, the drop down menu is hidden
+  const [isOpen, setOpen] = useState(false);
+  // reference to the drop down menu element to be used in useEffect. this is used to close the drop down menu when the user clicks outside of it
+  const dropdownRef = useRef(null);
+
+  // useEffect hook to close the dropdown menu when the user clicks outside of it
+  useEffect(() => {
+    // toggle the visibility of the drop down menu when the user clicks outside of it
+    const handleClickOutside = (e) => {
+      // check if the clicked element (i.e, e.target) is not within the dropdown menu element
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setOpen(false); // close the drop down menu
+      }
+    };
+
+  // add event listener when the mouse is clicked anywhere on the document
+  document.addEventListener("mousedown", handleClickOutside); 
+
+    // clean up the event listener 
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []); // empty array as dependency to ensure the effect runs only on the first render
 
   // styling for the search and sort buttons
   const buttonStyle =
     "px-3 bg-blue-500 hover:bg-blue-600 transition-colors duration-200 rounded-full mx-2";
 
-    // function to handle changes in the search query
-    // this is called when there is a change in the search input field
+  // function to handle changes in the search query
+  // this is called when there is a change in the search input field
   const handleQueryChange = (event) => {
     onQueryChange(event.target.value);
   };
 
   return (
     // Flexbox layout with centered items for the search input
-    <div className="flex justify-center mb-10 mt-8">
+    // ref to track clicks outside of the dropdown menu
+    <div className="flex justify-center mb-10 mt-8" ref={dropdownRef}>
       <button type="submit" className={buttonStyle}>
         {/* Search icons that has white text and xl size */}
         <BsSearch className="text-xl text-white" />
@@ -121,7 +145,7 @@ const Search = ({
         onClick={() => {
           setOpen(!isOpen);
         }}
-        className={`${buttonStyle} relative`} 
+        className={`${buttonStyle} relative`}
       >
         {/* icon representing the sort button */}
         <HiSortAscending className="text-xl text-white" />

@@ -50,7 +50,7 @@ const Uploader = () => {
 
       if (response.status === 201) {
         // show success notification
-        toast.success("Your smart contract has been uploaded and audited successfully.");
+        toast.success("Your smart contract has been audited successfully.");
         // on successful upload (status code 201), navigate to the detailed report page
         // response.data.report_id refer to the report_id returned by fastapi endpoint
         navigate(`/reports/${response.data.report_id}`);
