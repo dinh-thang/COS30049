@@ -113,7 +113,7 @@ def get_all_reports(db: Session):
 
     # check if there are no reports
     if not reports:
-        raise HTTPException(status_code=404, detail="No reports found. Please upload a report to view details.")
+        raise HTTPException(status_code=404, detail="No reports have been uploaded yet. Please upload a report to view details.")
 
     # initialise the result list with selected information from each report
     result = []

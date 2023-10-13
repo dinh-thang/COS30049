@@ -1,5 +1,5 @@
+import { toast } from "react-hot-toast";
 import React, { useEffect, useState } from "react";
-import { BiUpArrowAlt } from "react-icons/bi";
 import { BsFillTrashFill } from "react-icons/bs";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import ReactMarkdown from "react-markdown"; // library for rendering markdown content
@@ -49,11 +49,6 @@ const DetailReport = () => {
 
     // dependency array includes id to ensure useEffect runs when id changes
   }, [id]);
-
-  // function to scroll the page to the top with a smooth animation.
-  const handleScrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
 
   // render report details
   const renderReportDetails = () => (
@@ -145,9 +140,9 @@ const DetailReport = () => {
           />
         </li>
       </ul>
-          <h4 className="font-bold text-lg">Results:</h4>
-          {/* render each result and its details  */}
-          <ul className="list-none pl-6">{v.results.map(renderResult)}</ul>
+      <h4 className="font-bold text-lg">Results:</h4>
+      {/* render each result and its details  */}
+      <ul className="list-none pl-6">{v.results.map(renderResult)}</ul>
     </section>
   );
 
@@ -200,6 +195,9 @@ const DetailReport = () => {
   const handleDeleteReport = async () => {
     try {
       await api.delete(`/reports/${id}`); // call the api to delete the report
+      // show success notification
+      toast.success("Report deleted successfully.", { persistent: true }); // make the toast persistent even after page redirection
+
       // redirect the user to the Report History page after deletion
       navigate("/reports");
     } catch (error) {
@@ -223,25 +221,18 @@ const DetailReport = () => {
           >
             Report History
           </Link>
-          <button
-            onClick={handleDeleteReport}
-            className="px-4 py-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors duration-200"
-          >
-            {/* trash icon indicating delete action */}
-            <BsFillTrashFill className="text-xl"/> 
-          </button>
+          {/* only show delete button if there is no error */}
+          {!error && (
+            <button
+              onClick={handleDeleteReport}
+              className="px-4 py-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors duration-200"
+            >
+              {/* trash icon indicating delete action */}
+              <BsFillTrashFill className="text-xl" />
+            </button>
+          )}
         </div>
       </div>
-
-      {/* scroll to top button */}
-      <button
-        onClick={handleScrollToTop}
-        // make the button fixed at the bottom right corner of the page
-        className="fixed bottom-4 right-4 bg-blue-400 text-white px-2 py-2 rounded-full hover:bg-blue-500 transition-colors duration-200"
-      >
-        {/* up arrow icon indicating scroll to top action */}
-        <BiUpArrowAlt className="text-3xl" />
-      </button>
 
       {/* display server connection error message or other error msg if exists */}
       {error && (

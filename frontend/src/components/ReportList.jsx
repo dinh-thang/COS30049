@@ -38,12 +38,14 @@ const ReportList = ({ reports, onDelete }) => {
                   <td className="border px-4 py-2">{record.contract_name}</td>
                   <td className="border px-4 py-2">{record.submission_date}</td>
                   <td className="border px-4 py-2">{record.submission_time}</td>
-                  <td className="border px-4 py-2">{record.number_of_vulnerabilities}</td>
+                  <td className="border px-4 py-2">
+                    {record.number_of_vulnerabilities}
+                  </td>
                   <td className="border px-4 py-2 flex flex-col lg:flex-row justify-center">
                     {/* Link to detailed report page */}
                     <Link
                       className="text-blue-500 hover:underline"
-                      to={"/reports/" + (record.report_id)}
+                      to={"/reports/" + record.report_id}
                     >
                       Details
                     </Link>
@@ -92,7 +94,7 @@ const ReportList = ({ reports, onDelete }) => {
                   {/* Link to detailed report page */}
                   <Link
                     className="text-blue-500"
-                    to={"/reports/" + (record.report_id - 1)}
+                    to={"/reports/" + record.report_id}
                   >
                     Details
                   </Link>

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import {toast} from "react-hot-toast";
 import { BeatLoader } from "react-spinners"; // for spinner component while file is being uploaded
 import api from "../api";
 import { useNavigate } from "react-router-dom";
@@ -43,23 +44,27 @@ const Uploader = () => {
 
     try {
       setIsLoading(true); // set loading to true when starting the upload
-      
+
       // make a POST request to the API endpoint
-      const response = await api.post('/upload_contract', formData); 
+      const response = await api.post("/upload_contract", formData);
 
       if (response.status === 201) {
+        // show success notification
+        toast.success("Your smart contract has been uploaded and audited successfully.");
         // on successful upload (status code 201), navigate to the detailed report page
         // response.data.report_id refer to the report_id returned by fastapi endpoint
         navigate(`/reports/${response.data.report_id}`);
       } else if (response.status === 422) {
-        // if has unprocessable entity 422 status code, set the error message 
+        // if has unprocessable entity 422 status code, set the error message
         setError("Invalid input data encoding format. Please try again.");
       }
-    } catch (e) { // catch any other errors
-      if (e.isServerConnectionError) { // server connection error that has been set globally in api.js file
+    } catch (e) {
+      // catch any other errors
+      if (e.isServerConnectionError) {
+        // server connection error that has been set globally in api.js file
         setError(e.message); // e.message refer to the message defined in api.js file
       } else {
-        // other error msg from the fastapi server or fallback msg 
+        // other error msg from the fastapi server or fallback msg
         setError(
           e.response?.data?.detail ||
             "An error occurred while processing the file"
@@ -96,6 +101,9 @@ const Uploader = () => {
 
     // set the file state to the dropped file
     selectFile(file);
+
+    // reset the error state, so that the error msg disappears when user upload a new file
+    setError(null);
   };
 
   return (

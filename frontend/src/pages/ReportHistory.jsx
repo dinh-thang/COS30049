@@ -1,3 +1,4 @@
+import { toast } from "react-hot-toast";
 import { TITLE1_CSS_CONFIGURATION } from "../constant";
 import { useEffect, useState } from "react";
 import Search from "../components/Search";
@@ -29,7 +30,7 @@ const ReportHistory = () => {
     return (
       report.report_id.toString().includes(query) ||
       report.contract_name.toLowerCase().includes(query.toLowerCase()) ||
-      report.number_of_vulnerabilities.includes(query) ||
+      report.number_of_vulnerabilities.toString().includes(query) ||
       report.submission_date.includes(query) ||
       report.submission_time.toLowerCase().includes(query.toLowerCase())
     );
@@ -56,7 +57,9 @@ const ReportHistory = () => {
     } catch (error) {
       // if has 404 status code, meaning no report with given id found
       if (error.response && error.response.status === 404) {
-        setError("No reports found. Please upload a report to view details.");
+        setError(
+          "No reports have been uploaded yet. Please upload a report to view details."
+        );
       } else {
         // for any other error as fallback msg and server connection error
         setError(
@@ -89,7 +92,7 @@ const ReportHistory = () => {
   const handleDelete = async (report_id) => {
     try {
       // delete report from the database
-      deleteAReport(report_id);
+      await deleteAReport(report_id);
 
       // filtering out the deleted report
       const updatedReports = reports.filter(
@@ -97,6 +100,9 @@ const ReportHistory = () => {
       );
       // update the reports state to the filtered report
       setReports(updatedReports);
+
+      // show success notification
+      toast.success("Report deleted successfully.");
     } catch (error) {
       console.error("An error occurred:", error);
     }
