@@ -84,8 +84,9 @@ def analyze_contract(file_path: str, solidity_version: str):
 #  filter report file and extract vulnerability information from it
 def filter_report(file_path: str):
     try:
+        # open the .md file
         with open(file_path, "r") as f:
-            md_content = f.read()
+            md_content = f.read() # read the file
 
             # patterns to match vulnerability types, impact, confidence, and results. 
             vulnerability_pattern = re.compile(
@@ -95,33 +96,40 @@ def filter_report(file_path: str):
             # one vuln can have many results with different locations within the contract
             result_pattern = re.compile(r'- \[ \] ID-(?P<id>\d+)\n(?P<description>.*?)(?=\nuploads/(?P<location>\S+)|$)', re.DOTALL)
 
-
+            # find matches for each vulnerability from the pattern in the md file content
             matches = re.finditer(vulnerability_pattern, md_content)
 
-            vulnerabilities = []
+            vulnerabilities = [] # initialise the list of vulnerabilities to be returned
 
+            # for each match in the matches list
             for match in matches:
+                # convert the match to a dictionary with key value pair
                 result_dict = match.groupdict()
+                # prepare the vulnerability format to be returned
                 vulnerability_info = {
                     "vulnerability_type": result_dict["vulnerability_type"],
                     "impact": result_dict["impact"],
                     "confidence": result_dict["confidence"],
                     "description": None,  # initialise description
                     "recommendation": None,  # initialise recommendation
-                    "results": []
+                    "results": [] # initialise results list
                 }
 
                 # find matches for each result within the vulnerability
                 results_matches = re.finditer(result_pattern, result_dict["results"])
                 for result_match in results_matches:
+                    # convert the result match to a dictionary with key value pairs
                     result = result_match.groupdict()
+                    # append the result to the list of results
                     vulnerability_info["results"].append({
-                        "ID": int(result["id"]),
-                        "description": result["description"].strip(),
-                        "location": result["location"],
+                        # strip the description to remove surrounding whitespace
+                        "description": result["description"].strip(), 
+                        "location": result["location"]
                     })
 
+                # find description for the vulnerability type
                 vulnerability_info["description"] = find_description(vulnerability_info["vulnerability_type"])
+
                 # find recommendation for the vulnerability type
                 vulnerability_info["recommendation"] = find_recommendation(vulnerability_info["vulnerability_type"])
 
@@ -141,7 +149,7 @@ def find_recommendation(check_name: str):
     try:
         file_path = DETECTOR_DOCUMENT_PATH # the path to the detector document
         
-        # open the wiki file
+        # open the wiki i.e., detector documentation file
         with open(file_path, 'r') as f:
             file_content = f.read() # read the file
 
@@ -157,6 +165,7 @@ def find_recommendation(check_name: str):
 
         # return the recommendation if has a match
         if match:
+            # get the named group recommendation match from the regexp
             recommendation = match.group('recommendation').strip()
             return recommendation
         
@@ -187,6 +196,7 @@ def find_description(check_name: str):
         
         # return the description if a match is found
         if match:
+            # get the description named group from the regexp
             description = match.group('description').strip()
             return description
 

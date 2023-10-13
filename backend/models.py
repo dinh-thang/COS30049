@@ -16,9 +16,10 @@ class Vulnerability(Base):
     vulnerability_type = Column(String(255))
     impact = Column(String(255))
     confidence = Column(String(255))
-    description = Column(Text)
-    recommendation = Column(Text)
+    description = Column(Text) # description is long so Text data type is used
+    recommendation = Column(Text) # recommendation is long so Text data type is used
     
+    # establish many-to-many relationship between vulnerabilities and reports through Result table
     reports = relationship('Result', back_populates='vulnerability')
 
 class Report(Base):
@@ -33,6 +34,7 @@ class Report(Base):
     submission_time = Column(Time)
     number_of_vulnerabilities = Column(Integer, default=0)
     
+    # establish many-to-many relationship between vulnerabilities and reports through Result table
     vulnerabilities = relationship('Result', back_populates='report')
 
 class Result(Base):
@@ -42,10 +44,11 @@ class Result(Base):
     __tablename__ = 'results'
 
     result_id = Column(Integer, primary_key=True, autoincrement=True)
-    description = Column(Text)
+    description = Column(Text) # as description is long so Text data type is used
     location = Column(String(255))
-    report_id = Column(Integer, ForeignKey('reports.report_id'))
-    vulnerability_id = Column(Integer, ForeignKey('vulnerabilities.vulnerability_id'))
+    report_id = Column(Integer, ForeignKey('reports.report_id')) # foreign key to reports table
+    vulnerability_id = Column(Integer, ForeignKey('vulnerabilities.vulnerability_id')) # foreign key to vulnerabilities table
 
+    # establish many-to-one relationship between reports/vulnerabilities and result table
     report = relationship('Report', back_populates='vulnerabilities')
     vulnerability = relationship('Vulnerability', back_populates='reports')

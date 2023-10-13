@@ -1,8 +1,9 @@
-// This file handles API calls from the frontend, providing a centralised place to manage communication with the backend through axios
+// This file handles API calls from the frontend, 
+// providing a centralised place to manage communication with the backend through axios
 
 import axios from "axios";
 
-// add connection to FastAPI
+// add connection to FastAPI, creating an axios instance
 const api = axios.create({
   baseURL: "http://localhost:8000", // fastapi base url as it runs on port 8000
 });

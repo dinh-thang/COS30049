@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import {BiUpArrowAlt} from 'react-icons/bi'
-import { useParams, Link } from "react-router-dom";
+import { BiUpArrowAlt } from "react-icons/bi";
+import { BsFillTrashFill } from "react-icons/bs";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import ReactMarkdown from "react-markdown"; // library for rendering markdown content
 import breaks from "remark-breaks"; // remark plugin for handling line breaks
 import api from "../api"; // Axios instance for making API requests
@@ -13,6 +14,8 @@ const DetailReport = () => {
   const [isLoading, setIsLoading] = useState(true); // state for loading spinner
   const [noVulnerabilities, setNoVulnerabilities] = useState(false); // state to track if there are no vulnerabilities
   const [error, setError] = useState(null); // state to handle server connection error msg
+
+  const navigate = useNavigate(); // useNavigate hook from react-router-dom
 
   // fetch report data
   useEffect(() => {
@@ -30,7 +33,7 @@ const DetailReport = () => {
         if (error.response && error.response.status === 404) {
           setError("No reports found. Please upload a report to view details.");
         } else {
-          // for any other error as fallback msg and server connection error
+          // for any other error such as fallback msg or server connection error
           setError(
             error.isServerConnectionError
               ? error.message
@@ -47,6 +50,7 @@ const DetailReport = () => {
     // dependency array includes id to ensure useEffect runs when id changes
   }, [id]);
 
+  // function to scroll the page to the top with a smooth animation.
   const handleScrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -111,7 +115,7 @@ const DetailReport = () => {
           <span className="font-bold">Vulnerability type: </span>
           {/* use react-markdown to convert markdown format stored in the db to html element */}
           <ReactMarkdown
-            components={{ a: MarkdownLink }}
+            components={{ a: MarkdownLink }} // set anchor tag of react-markdown to be clickable
             children={v.vulnerability_type}
           />
         </li>
@@ -122,29 +126,28 @@ const DetailReport = () => {
         <li>
           <span className="font-bold">Confidence level: </span>
           <ReactMarkdown
-            components={{ a: MarkdownLink }}
+            components={{ a: MarkdownLink }} // set anchor tag of react-markdown to be clickable
             children={v.confidence}
           />
         </li>
         <li>
           <span className="font-bold">Description: </span>
           <ReactMarkdown
-            components={{ a: MarkdownLink }}
+            components={{ a: MarkdownLink }} // set anchor tag of react-markdown to be clickable
             children={v.description}
           />
         </li>
         <li>
           <span className="font-bold">Recommendation: </span>
           <ReactMarkdown
-            components={{ a: MarkdownLink }}
+            components={{ a: MarkdownLink }} // set anchor tag of react-markdown to be clickable
             children={v.recommendation}
           />
         </li>
-        <li>
-          <span className="font-bold">Results:</span>
-          <ul className="list-none pl-6">{v.results.map(renderResult)}</ul>
-        </li>
       </ul>
+          <h4 className="font-bold text-lg">Results:</h4>
+          {/* render each result and its details  */}
+          <ul className="list-none pl-6">{v.results.map(renderResult)}</ul>
     </section>
   );
 
@@ -159,8 +162,8 @@ const DetailReport = () => {
           <li>
             <span className="font-bold">Description: </span>
             <ReactMarkdown
-              components={{ a: DisabledLink }}
-              remarkPlugins={[breaks]}
+              components={{ a: DisabledLink }} // set anchor tag of react-markdown to be not clickable
+              remarkPlugins={[breaks]} // use remark plugin for handling line breaks
               children={result.description}
             />
           </li>
@@ -173,7 +176,7 @@ const DetailReport = () => {
     </li>
   );
 
-  // disabled link to be used in the result description as these links should be not clickable and has styling
+  // disabled link component to be used in the result description as these links should be not clickable and has styling
   const DisabledLink = ({ children }) => (
     <span className="font-bold underline underline-offset-2 decoration-blue-500">
       {children}
@@ -193,6 +196,18 @@ const DetailReport = () => {
     </a>
   );
 
+  // function to handle delete the report
+  const handleDeleteReport = async () => {
+    try {
+      await api.delete(`/reports/${id}`); // call the api to delete the report
+      // redirect the user to the Report History page after deletion
+      navigate("/reports");
+    } catch (error) {
+      // error handling
+      console.error("Error deleting report:", error);
+    }
+  };
+
   return (
     <div>
       <div className="flex flex-col items-center justify-center">
@@ -201,12 +216,21 @@ const DetailReport = () => {
           Detail Report {id}
         </h1>
         {/*  a link to return to report history page with custom styling */}
-        <Link
-          to="/reports"
-          className="mb-4 mt-4 px-5 py-2 rounded-full flex items-center text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-200"
-        >
-          Report History
-        </Link>
+        <div className="flex items-center justify-normal flex-row mb-3">
+          <Link
+            to="/reports"
+            className="px-4 py-2 mx-3 bg-blue-500 text-l text-white rounded-full hover:bg-blue-600 transition-colors duration-200"
+          >
+            Report History
+          </Link>
+          <button
+            onClick={handleDeleteReport}
+            className="px-4 py-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors duration-200"
+          >
+            {/* trash icon indicating delete action */}
+            <BsFillTrashFill className="text-xl"/> 
+          </button>
+        </div>
       </div>
 
       {/* scroll to top button */}
@@ -215,7 +239,8 @@ const DetailReport = () => {
         // make the button fixed at the bottom right corner of the page
         className="fixed bottom-4 right-4 bg-blue-400 text-white px-2 py-2 rounded-full hover:bg-blue-500 transition-colors duration-200"
       >
-        <BiUpArrowAlt className="text-3xl"/>
+        {/* up arrow icon indicating scroll to top action */}
+        <BiUpArrowAlt className="text-3xl" />
       </button>
 
       {/* display server connection error message or other error msg if exists */}
@@ -233,7 +258,7 @@ const DetailReport = () => {
       {isLoading && (
         <div className="text-center mt-4">
           {/* Display a loading spinner */}
-          <BeatLoader color="#1d4ed8" loading={isLoading} />
+          <BeatLoader color="#1d4ed8" loading={true} />
           <p>Loading...</p>
         </div>
       )}

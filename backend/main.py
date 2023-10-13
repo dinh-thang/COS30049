@@ -5,7 +5,7 @@ from database import get_db
 import services
 import crud
 
-app = FastAPI() # initialize FastAPI app
+app = FastAPI() # initialise FastAPI app
 
 # CORS configuration to allow React app to access the API
 origins = [
@@ -17,10 +17,11 @@ app.add_middleware(
     allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"],
+    allow_headers=["*"]
 )
 
 # uploading a contract file and creating audit report endpoint
+# status code of 201 (CREATED) indicates a successful upload
 @app.post("/upload_contract", status_code=status.HTTP_201_CREATED)
 async def create_report(contract: UploadFile, db: Session = Depends(get_db)):
     """
@@ -32,11 +33,11 @@ async def create_report(contract: UploadFile, db: Session = Depends(get_db)):
         (5) Upload_report(report), upload the filtered report to the database and return status code
     """  
     try:
-        # validate if the file is provided
+        # server validation if the file is provided
         if not contract:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No file provided. Please upload a .sol file.")
 
-        # validate if the uploaded file is a .sol file
+        # server validation if the uploaded file is a .sol file
         if not contract.filename.endswith(".sol"):
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid file extension. Please upload only .sol files for auditing.")
         
@@ -77,16 +78,19 @@ async def create_report(contract: UploadFile, db: Session = Depends(get_db)):
         # 500 status code and generic error details
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal server error. Please try again.")
 
+# status code of 200 (OK) indicates a successful retrieval
 @app.get("/reports/", status_code=status.HTTP_200_OK)
 async def get_all_reports(db: Session = Depends(get_db)):
     """Get all reports endpoint, returns a list of all reports."""
     return crud.get_all_reports(db)
 
+# status code of 200 (OK) indicates a successful retrieval
 @app.get("/reports/{report_id}", status_code=status.HTTP_200_OK)
 async def get_report(report_id: int, db: Session = Depends(get_db)):
     """Get a specific report by ID."""
     return crud.get_report(db, report_id)
 
+# status code of 204 (NO_CONTENT) indicates a successful deletion
 @app.delete("/reports/{report_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_report(report_id: int, db: Session = Depends(get_db)):
     """Delete a specific audit report by ID endpoint, returns a response with a status code of 204 (NO_CONTENT), indicating a successful deletion."""

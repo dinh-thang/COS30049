@@ -7,6 +7,7 @@ from datetime import datetime
 
 # define decorator that provides consistent error handling and cleanup for database operations.
 def db_handler(func):
+    # wrapper function to handle exceptions
     def wrapper(db: Session, *args, **kwargs):
         try:
             return func(db, *args, **kwargs)
@@ -21,11 +22,11 @@ def db_handler(func):
     return wrapper
 
 # upload the report to the database, this including adding data into all 3 tables: report, vulnerability, and report_vulnerability
-@db_handler # use the decorator for error handling
+@db_handler # use the decorator  defined above for error handling
 def upload_report(db: Session, report_data: dict):
     # remove the vuln list to insert only report-related data to the db
     vulnerabilities_data = report_data.pop('vulnerabilities_details', [])
-    # convert submission_date and submission_time to datetime object
+    # convert submission_date and submission_time to datetime object to insert into the db
     submission_date = datetime.strptime(report_data['submission_date'], "%d-%m-%Y").date()
     submission_time = datetime.strptime(report_data['submission_time'], "%I:%M %p").time()
     
@@ -65,7 +66,7 @@ def upload_report(db: Session, report_data: dict):
 
 
 # Function to create a new report and save it to the database Report table
-@db_handler
+@db_handler # use the decorator  defined above for error handling
 def create_report(db: Session, report_data: dict):
     #  creates a new Report object using the report_data,
     report = Report(**report_data)
@@ -76,7 +77,7 @@ def create_report(db: Session, report_data: dict):
     return report
 
 # Function to save a new vulnerability to the database Vulnerability table
-@db_handler
+@db_handler # use the decorator  defined above for error handling
 def create_vulnerability(db: Session, vuln_data: dict):
     # remove the results list to insert vuln related data to the db
     vuln_data.pop('results') 
@@ -90,7 +91,7 @@ def create_vulnerability(db: Session, vuln_data: dict):
 
 
 # Function to create a new result and save it to the database Result table
-@db_handler
+@db_handler # use the decorator  defined above for error handling
 def create_result(db: Session, result_data: dict, report_id: int, vulnerability_id: int):
     # creates a new Result object using the result data and the provided IDs
     result = Result(
@@ -104,10 +105,10 @@ def create_result(db: Session, result_data: dict, report_id: int, vulnerability_
     db.refresh(result)
 
 
-# function to retrieves a list of reports from the database with pagination.
-@db_handler
+# function to retrieves a list of reports from the database
+@db_handler # use the decorator  defined above for error handling
 def get_all_reports(db: Session):
-    # query the database to get a list of reports with pagination
+    # query the database to get a list of reports
     reports = db.query(Report).all()
 
     # check if there are no reports
@@ -132,7 +133,7 @@ def get_all_reports(db: Session):
 
 
 # Function to retrieve a specific report from a database along with its associated vulnerabilities and results details.
-@db_handler
+@db_handler # use the decorator  defined above for error handling
 def get_report(db: Session, report_id: int):
     # query the database to get a specific report with associated vulnerabilities
     # this is done by joining the Report and Vulnerability tables on the report_id
@@ -154,7 +155,8 @@ def get_report(db: Session, report_id: int):
         "submission_date": report.submission_date.strftime('%d-%m-%Y'),
         "submission_time": report.submission_time.strftime('%I:%M %p'),
         "number_of_vulnerabilities": report.number_of_vulnerabilities,
-        "vulnerabilities_details": {} # initialise vuln_details as dict instead of list to use vuln_id key
+        # initialise vuln_details as dict instead of list to use its vuln_id key
+        "vulnerabilities_details": {} 
     }
 
     # iterate through each vulnerability in the report (this relationship attribute is defined in models.py)
@@ -162,7 +164,8 @@ def get_report(db: Session, report_id: int):
         vuln = result.vulnerability # get the vulnerability attribute of result model
 
         # check if vulnerability is already in the report_info["vulnerabilities_details"] 
-        # this is to prevent duplication of vulnerability as we are iterating through the result model, not vulnerability model
+        # this is to prevent duplication of vulnerability 
+        # as we are iterating through the result model, not vulnerability model
         if vuln.vulnerability_id not in report_info["vulnerabilities_details"]:
             report_info["vulnerabilities_details"][vuln.vulnerability_id] = {
                 "vulnerability_type": vuln.vulnerability_type,
@@ -179,10 +182,10 @@ def get_report(db: Session, report_id: int):
             "location": result.location
         })
 
-    # convert the vulnerabilities_details dictionary to a list of vulnerabilities details
+    # convert the vulnerabilities_details dictionary to list object
     report_info["vulnerabilities_details"] = list(report_info["vulnerabilities_details"].values())
 
-    return report_info
+    return report_info # return the detailed report information
 
 
 # function to delete a specific report from the database by its report_id
@@ -195,7 +198,7 @@ def delete_report(db: Session, report_id: int):
     if report is None:
         raise HTTPException(status_code=404, detail="Report not found")
 
-    # delete associated vulnerabilities first
+    # delete associated vuln results data from Result table first
     db.query(Result).filter(Result.report_id == report_id).delete()
 
     # then delete the report itself
@@ -203,5 +206,5 @@ def delete_report(db: Session, report_id: int):
     db.commit() # commit the changes
     
     # return a success message
-    return {"message": "Report deleted successfully"}
+    return {"detail": "Report deleted successfully"}
 
