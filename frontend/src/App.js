@@ -38,7 +38,7 @@ const App = () => {
       <button
         onClick={handleScrollToTop}
         // make the button fixed at the bottom right corner of the page
-        className="fixed bottom-4 right-4 bg-blue-400 text-white px-2 py-2 rounded-full hover:bg-blue-500 transition-colors duration-200"
+        className="fixed bottom-4 right-4 bg-blue-400 text-white px-1 py-1 rounded-full hover:bg-blue-500 transition-colors duration-200"
       >
         {/* up arrow icon indicating scroll to top action */}
         <BiUpArrowAlt className="text-3xl" />
