@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import Search from "../components/Search";
 import ReportList from "../components/ReportList";
 import api from "../api";
+import { BeatLoader } from "react-spinners";
 
 // this component represents a page that displays a list of reports
 const ReportHistory = () => {
@@ -11,11 +12,13 @@ const ReportHistory = () => {
   const [query, setQuery] = useState(""); // to manage search query, by default, the query is empty
   const [sortBy, setSortBy] = useState("submission_date"); // to manage sort field, by default, sort by submission date field
   const [orderBy, setOrderBy] = useState("asc"); // to manage sort order, by default, the report list is displayed in ascending order
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   // trigger after the component is mounted
   useEffect(() => {
-    getAllReportData()
-  }, [])
+    getAllReportData();
+  }, []);
 
   // function to check if a report matches the current query
   function matchesQuery(report) {
@@ -36,7 +39,8 @@ const ReportHistory = () => {
     let sortingOrder = orderBy === "asc" ? 1 : -1; // determine sorting order based on orderBy value
 
     // Default sorting by other fields if the user does not select sort by "number of vuls"
-    return a[sortBy].toString().toLowerCase() < b[sortBy].toString().toLowerCase()
+    return a[sortBy].toString().toLowerCase() <
+      b[sortBy].toString().toLowerCase()
       ? -1 * sortingOrder // Sort in ascending order
       : 1 * sortingOrder; // Sort in descending order
   }
@@ -44,41 +48,49 @@ const ReportHistory = () => {
   // get all the report each time the page is rendered
   async function getAllReportData() {
     try {
-      const reportData = await api.get("/reports/")
-      setReports(reportData.data)
+      setIsLoading(true);
+      const reportData = await api.get("/reports/");
+      setReports(reportData.data);
+      setError(null);
     } catch (error) {
-      console.error("An error occurred:", error)
+      setError(
+        error.isServerConnectionError
+          ? error.message
+          : "An error occurred while fetching reports. Please try again later."
+      );
+    } finally {
+      setIsLoading(false);
     }
   }
 
   // delete a report from the database
-  const deleteAReport = async(id) => {
-    await api.delete("/reports/" + id)
-  }
+  const deleteAReport = async (id) => {
+    await api.delete("/reports/" + id);
+  };
 
   // filter and sort the reports based on search and sort criteria
   const filteredReports = () => {
     if (Array.isArray(reports)) {
-      return reports.filter(matchesQuery).sort(sortReports); 
+      return reports.filter(matchesQuery).sort(sortReports);
     } else {
-      return []
+      return [];
     }
-  }
+  };
+
   // function to handle report deletion
-  const handleDelete = async(report_id) => {
+  const handleDelete = async (report_id) => {
     try {
       // delete report from the database
-      deleteAReport(report_id)
+      deleteAReport(report_id);
 
       // filtering out the deleted report
       const updatedReports = reports.filter(
         (report) => report.report_id !== report_id
       );
       // update the reports state to the filtered report
-      setReports(updatedReports);   
-      
-    } catch(error) {
-      console.error("An error occurred:", error)
+      setReports(updatedReports);
+    } catch (error) {
+      console.error("An error occurred:", error);
     }
   };
 
@@ -95,8 +107,26 @@ const ReportHistory = () => {
         orderBy={orderBy}
         onOrderByChange={(newOrderBy) => setOrderBy(newOrderBy)} // handle sort order changes
       />
-      {/* display list of reports */}
-      <ReportList reports={filteredReports()} onDelete={handleDelete} />
+
+      {isLoading && (
+        <div className="flex flex-col justify-center items-center">
+          {/* Display a loading spinner */}
+          <BeatLoader color="#1d4ed8" loading={true} />
+          <p>Loading...</p>
+        </div>
+      )}
+
+      {/* Check if there is an error */}
+      {error && (
+        <div className="text-red-600 flex justify-center items-center mb-3 text-center">
+          {error}
+        </div>
+      )}
+
+      {/* Display list of reports if there is no error and data is not loading */}
+      {!isLoading && !error && (
+        <ReportList reports={filteredReports()} onDelete={handleDelete} />
+      )}
     </div>
   );
 };

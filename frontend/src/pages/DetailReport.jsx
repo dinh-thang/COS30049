@@ -9,7 +9,7 @@ import { BeatLoader } from "react-spinners"; // Loading spinner component from r
 const DetailReport = () => {
   const { id } = useParams(); // extract 'id' from the route parameters
   const [report, setReport] = useState([]); // state to store the report data
-  const [loading, setLoading] = useState(true); // state for loading spinner
+  const [isLoading, setIsLoading] = useState(true); // state for loading spinner
   const [noVulnerabilities, setNoVulnerabilities] = useState(false); // state to track if there are no vulnerabilities
   const [error, setError] = useState(null); // state to handle server connection error msg
 
@@ -21,16 +21,16 @@ const DetailReport = () => {
         // make a GET request to API endpoint for each specific report
         const { data } = await api.get(`/reports/${id}`);
         setReport(data); // update the report state with the fetched data
-        setLoading(false); // make loading spinner disappear after has done fetching
+        setIsLoading(false); // make loading spinner disappear after has done fetching
         // set state based on the presence of vulnerabilities in the report, if true then display no vulnerabilities found msg
         setNoVulnerabilities(data.number_of_vulnerabilities === 0);
       } catch (error) {
         // handle errors if exists
-        setLoading(false); // make loading spinner disappear if error occurs
+        setIsLoading(false); // make loading spinner disappear if error occurs
         // set the error message
         setError(
           error.isServerConnectionError
-            ? "Server connection error"
+            ? error.message
             : "Error fetching report"
         );
       }
@@ -75,16 +75,17 @@ const DetailReport = () => {
       {/* display a msg if there are no vulnerabilities found */}
       {noVulnerabilities && <p>No vulnerabilities found.</p>}
       {/* display loading spinner or vulnerability details based on loading state */}
-      {loading ? ( // Display spinner when loading
+      {isLoading ? ( // Display spinner when loading
         <div className="text-center">
           {/* display spinner when loading */}
           <BeatLoader color="#1d4ed8" loading={true} />
+          <p>Loading...</p>
         </div>
       ) : (
         // Display vulnerability details if loading is complete and vulnerabilities are present
         report.length !== 0 &&
         // map over the vulnerabilities and render each one
-        report.vulnerabilities_details.map(renderVulnerability) 
+        report.vulnerabilities_details.map(renderVulnerability)
       )}
     </section>
   );
@@ -202,12 +203,23 @@ const DetailReport = () => {
           Report History
         </Link>
       </div>
+
       {/* display server connection error message or other error msg if exists */}
       {error && <div className="text-red-600 text-center mt-4">{error}</div>}
-      {/* render Report Details section */}
-      {renderReportDetails()}
-      {/* render Vulnerability Details section */}
-      {renderVulnerabilityDetails()}
+      {/* display loader component if data is loading */}
+      {isLoading && (
+        <div className="text-center mt-4">
+          {/* Display a loading spinner */}
+          <BeatLoader color="#1d4ed8" loading={isLoading} />
+          <p>Loading...</p>
+        </div>
+      )}
+
+      {/* display report details if there is no error and data is not loading */}
+      {!isLoading && !error && renderReportDetails()}
+      
+      {/* display vulnerability details if there is no error and data is not loading */}
+      {!isLoading && !error && renderVulnerabilityDetails()}
     </div>
   );
 };

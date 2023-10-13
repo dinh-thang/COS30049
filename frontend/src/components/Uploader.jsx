@@ -160,7 +160,7 @@ const Uploader = () => {
         )}
         {/* display error msg if exists */}
         {error && (
-          <div className="text-red-500 mt-2 flex justify-center items-center">
+          <div className="text-red-500 mt-2 flex justify-center items-center text-center">
             {error}
           </div>
         )}
