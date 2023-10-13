@@ -47,7 +47,7 @@ def extract_solidity_version(file_path: str):
         if not version_pattern:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Solidity version not found in the file. Please upload file with a valid Solidity version for audit.",
+                detail="Solidity version not found in the file. Please upload file with a valid Solidity version for auditing.",
             )
 
         # return the version if found

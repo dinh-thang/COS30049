@@ -106,9 +106,9 @@ def create_result(db: Session, result_data: dict, report_id: int, vulnerability_
 
 # function to retrieves a list of reports from the database with pagination.
 @db_handler
-def get_all_reports(db: Session, skip: int, limit: int):
+def get_all_reports(db: Session):
     # query the database to get a list of reports with pagination
-    reports = db.query(Report).offset(skip).limit(limit).all()
+    reports = db.query(Report).all()
 
     # check if there are no reports
     if not reports:
@@ -186,7 +186,7 @@ def get_report(db: Session, report_id: int):
 
 
 # function to delete a specific report from the database by its report_id
-@db_handler
+@db_handler # use the defined decorator for error handling
 def delete_report(db: Session, report_id: int):
     # check if the report exists
     report = db.query(Report).filter(Report.report_id == report_id).first()

@@ -78,9 +78,9 @@ async def create_report(contract: UploadFile, db: Session = Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal server error. Please try again.")
 
 @app.get("/reports/", status_code=status.HTTP_200_OK)
-async def get_all_reports(skip: int = 0, limit: int = 15, db: Session = Depends(get_db)):
-    """Get all reports endpoint, accepts optional parameters skip and limit to control pagination."""
-    return crud.get_all_reports(db, skip, limit)
+async def get_all_reports(db: Session = Depends(get_db)):
+    """Get all reports endpoint, returns a list of all reports."""
+    return crud.get_all_reports(db)
 
 @app.get("/reports/{report_id}", status_code=status.HTTP_200_OK)
 async def get_report(report_id: int, db: Session = Depends(get_db)):
