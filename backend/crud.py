@@ -112,9 +112,7 @@ def get_all_reports(db: Session, skip: int, limit: int):
 
     # check if there are no reports
     if not reports:
-        return {
-            "message": "No reports found. Please upload a report to view details."
-        }
+        raise HTTPException(status_code=404, detail="No reports found. Please upload a report to view details.")
 
     # initialise the result list with selected information from each report
     result = []
@@ -147,7 +145,7 @@ def get_report(db: Session, report_id: int):
 
     # check if the report exists
     if report is None:
-        raise HTTPException(status_code=404, detail="Report not found")
+        raise HTTPException(status_code=404, detail="Report not found. Please upload a report to view details.")
 
     # prepare the report data to be returned
     report_info = {

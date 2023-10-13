@@ -25,14 +25,19 @@ const DetailReport = () => {
         // set state based on the presence of vulnerabilities in the report, if true then display no vulnerabilities found msg
         setNoVulnerabilities(data.number_of_vulnerabilities === 0);
       } catch (error) {
-        // handle errors if exists
-        setIsLoading(false); // make loading spinner disappear if error occurs
-        // set the error message
-        setError(
-          error.isServerConnectionError
-            ? error.message
-            : "Error fetching report"
-        );
+        // if has 404 status code, meaning no reports has been uploaded yet
+        if (error.response && error.response.status === 404) {
+          setError("No reports found. Please upload a report to view details.");
+        } else {
+          // for any other error as fallback msg and server connection error
+          setError(
+            error.isServerConnectionError
+              ? error.message
+              : "An error occurred while fetching reports. Please try again later."
+          );
+        }
+      } finally {
+        setIsLoading(false); // set loading spinner to false to indicate that the page has finished loading
       }
     };
 
@@ -205,7 +210,16 @@ const DetailReport = () => {
       </div>
 
       {/* display server connection error message or other error msg if exists */}
-      {error && <div className="text-red-600 text-center mt-4">{error}</div>}
+      {error && (
+        <div className="text-red-600 flex justify-center items-center mb-3 flex-col text-center">
+          {error}
+          <p>
+            <Link className="text-blue-600 hover:underline" to="/">
+              Go to Homepage
+            </Link>
+          </p>
+        </div>
+      )}
       {/* display loader component if data is loading */}
       {isLoading && (
         <div className="text-center mt-4">
@@ -217,7 +231,7 @@ const DetailReport = () => {
 
       {/* display report details if there is no error and data is not loading */}
       {!isLoading && !error && renderReportDetails()}
-      
+
       {/* display vulnerability details if there is no error and data is not loading */}
       {!isLoading && !error && renderVulnerabilityDetails()}
     </div>

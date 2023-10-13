@@ -4,6 +4,7 @@ import Search from "../components/Search";
 import ReportList from "../components/ReportList";
 import api from "../api";
 import { BeatLoader } from "react-spinners";
+import { Link } from "react-router-dom";
 
 // this component represents a page that displays a list of reports
 const ReportHistory = () => {
@@ -48,32 +49,39 @@ const ReportHistory = () => {
   // get all the report each time the page is rendered
   async function getAllReportData() {
     try {
-      setIsLoading(true);
-      const reportData = await api.get("/reports/");
-      setReports(reportData.data);
-      setError(null);
+      setIsLoading(true); // set loading spinner to true to indicate that the page is loading
+      const reportData = await api.get("/reports/"); // get all reports from the database api
+      setReports(reportData.data); // update the report state with the fetched data
+      setError(null); // reset the error state
     } catch (error) {
-      setError(
-        error.isServerConnectionError
-          ? error.message
-          : "An error occurred while fetching reports. Please try again later."
-      );
+      // if has 404 status code, meaning no report with given id found
+      if (error.response && error.response.status === 404) {
+        setError("No reports found. Please upload a report to view details.");
+      } else {
+        // for any other error as fallback msg and server connection error
+        setError(
+          error.isServerConnectionError
+            ? error.message
+            : "An error occurred while fetching reports. Please try again later."
+        );
+      }
     } finally {
-      setIsLoading(false);
+      setIsLoading(false); // set loading spinner to false to indicate that the page has finished loading
     }
   }
 
   // delete a report from the database
   const deleteAReport = async (id) => {
-    await api.delete("/reports/" + id);
+    await api.delete("/reports/" + id); // delete the report from the database api
   };
 
   // filter and sort the reports based on search and sort criteria
   const filteredReports = () => {
     if (Array.isArray(reports)) {
-      return reports.filter(matchesQuery).sort(sortReports);
+      // check if reports is an array to avoid errors
+      return reports.filter(matchesQuery).sort(sortReports); // filter and sort the reports
     } else {
-      return [];
+      return []; // return an empty array if reports is not an array
     }
   };
 
@@ -116,10 +124,15 @@ const ReportHistory = () => {
         </div>
       )}
 
-      {/* Check if there is an error */}
+      {/* check if there is an error */}
       {error && (
-        <div className="text-red-600 flex justify-center items-center mb-3 text-center">
+        <div className="text-red-600 flex justify-center items-center mb-3 flex-col text-center">
           {error}
+          <p>
+            <Link className="text-blue-600 hover:underline" to="/">
+              Go to Homepage
+            </Link>
+          </p>
         </div>
       )}
 
