@@ -182,7 +182,7 @@ const DetailReport = () => {
   const MarkdownLink = ({ href, children }) => (
     <a
       href={href} // set the 'href' attribute to the value provided in the 'href' prop
-      className="text-blue-600"
+      className="text-blue-600 hover:underline"
       target="_blank" // to open link in a new tab
       rel="noopener noreferrer" // for security reasons when opening in a new tab
     >
