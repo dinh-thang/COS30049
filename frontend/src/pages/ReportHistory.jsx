@@ -13,7 +13,7 @@ const ReportHistory = () => {
   const [reports, setReports] = useState([]); // to manage report data
   const [query, setQuery] = useState(""); // to manage search query, by default, the query is empty
   const [sortBy, setSortBy] = useState("submission_date"); // to manage sort field, by default, sort by submission date field
-  const [orderBy, setOrderBy] = useState("asc"); // to manage sort order, by default, the report list is displayed in ascending order
+  const [orderBy, setOrderBy] = useState("desc"); // to manage sort order, by default, the report list is displayed in ascending order
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -23,7 +23,7 @@ const ReportHistory = () => {
   }, []);
 
   // function to check if a report matches the current query
-  function matchesQuery(report) {
+  const matchesQuery = (report) => {
     // filter reports based on various fields using the "query" state variable
     // convert both report field and query to lower case for case-insensitive search
     // check if each field e.g. contract name, submission time, etc. contains the query
@@ -36,16 +36,35 @@ const ReportHistory = () => {
     );
   }
 
-  // function to compare and sort reports based on the current sorting criteria
-  function sortReports(a, b) {
-    let sortingOrder = orderBy === "asc" ? 1 : -1; // determine sorting order based on orderBy value
-
-    // Default sorting by other fields if the user does not select sort by "number of vuls"
-    return a[sortBy].toString().toLowerCase() <
-      b[sortBy].toString().toLowerCase()
-      ? -1 * sortingOrder // Sort in ascending order
-      : 1 * sortingOrder; // Sort in descending order
-  }
+  const sortReports = (a, b) => {
+    // determine sorting order based on orderBy value
+    const sortingOrder = orderBy === "asc" ? -1 : 1;
+  
+    // if sorting by submission_date field
+    if (sortBy === "submission_date") {
+      // convert submission dates and times to Date objects for comparison
+      const dateA = new Date(`${a.submission_date} ${a.submission_time}`);
+      const dateB = new Date(`${b.submission_date} ${b.submission_time}`);
+  
+      // compare dates
+      if (dateA < dateB) {
+        return 1 * sortingOrder; // return 1 for ascending order, -1 for descending order
+      }
+      if (dateA > dateB) {
+        return -1 * sortingOrder;  // return -1 for ascending order, 1 for descending order
+      }
+  
+      // if dates are the same, sort by report_id to display the latest report on top
+      return (b.report_id - a.report_id) * sortingOrder;
+    } else {
+      // default sorting by other fields if not sorting by submission_date
+      // compare other fields in ascending or descending order based on sortingOrder
+      return a[sortBy].toString().toLowerCase() < b[sortBy].toString().toLowerCase()
+        ? 1 * sortingOrder // sort in ascending order
+        : -1 * sortingOrder; // sort in descending order
+    }
+  };
+  
 
   // get all the report each time the page is rendered
   async function getAllReportData() {
